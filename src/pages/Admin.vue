@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="user == 'joseduarte019@gmail.com'">
+    <div>
       <q-table
         grid
         class="q-ma-md"

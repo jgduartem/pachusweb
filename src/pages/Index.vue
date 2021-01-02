@@ -1,99 +1,33 @@
 <template>
-      <div>
-        <div class="row col-12 waveBg" style="height: 90vh">
-          <div class="q-pa-lg col-xs-12 col-sm-5 col-md-5 col-lg-5">
-            <q-card class="q-pa-md justify-between row col-12 shadow-2 bg-grey-2" bordered style="height: 100%">
-              <q-card class="q-ml-sm q-mb-sm col-5 shadow-2 " style="height: 50%">
-
-              </q-card>
-               <q-card class="q-mr-sm col-5 shadow-2 q-mb-sm " style="height: 50%">
-
-              </q-card>
-              <q-card class="q-ml-sm col-5 shadow-2 " style="height: 50%">
-
-              </q-card>
-               <q-card class="q-mr-sm col-5 shadow-2 " style="height: 50%">
-
-              </q-card>
+      <div class="q-pa-md">
+        <div style="height: 90vh">
+          <div v-for='item in data' :key='item.id'>
+            <q-card class="q-ma-sm q-pa-sm">
+              <q-card-section class="row col-12">
+                <div class="row col-3 q-mr-md">
+                  <q-img :src="item.url"/>
+                </div>
+                <div class="col-8">
+                  <div class="text-h5 q-mt-sm q-mb-xs">{{item.item}}</div>
+                  <div class="text-overline text-orange-9">{{item.color}}</div>
+                  <div class="text-caption text-grey">{{item.descripcion}}</div>
+                </div>
+              </q-card-section>
+              <q-card-actions class="row justify-end">
+                <q-btn label="Ver" />
+                <q-btn label="Agregar al carrito" @click="addToList(item)"/>
+              </q-card-actions>
             </q-card>
-          </div>
-          
-          <div class="q-pa-md col-xs-12 col-sm-7 col-md-7 col-lg-7 justify-center">
-            <div class="flex flex-center" style="height: 100%">
-              <q-img src="shopping.png" style="max-width: 100%; heigth: auto" />
-               <q-btn v-if="session == false" rounded class="pachuAzul q-ma-xs" text-color="white" size="lg" label="Registrate" @click="registro = true" />
-            </div>       
+            <q-space/>
           </div>
         </div>
-        <q-dialog v-model="registro" persistent full-width @hide='step=1'>
-          <q-card>
-            <q-bar>
-              <q-space/>
-              <q-btn dense flat icon="close" color="grey-3" v-close-popup>
-                <q-tooltip>Cerrar</q-tooltip>
-              </q-btn>
-            </q-bar>
-            <q-card-section>
-              <q-stepper
-                v-model="step"
-                ref="stepper"
-                color="primary"
-                animated
-              >
-                <q-step
-                  :name="1"
-                  title="Introduce tu Email y Contraseña"
-                  icon="settings"
-                  :done="step > 1"
-                >
-                <q-input class="q-ma-sm" type="text" v-model="email" label="Email"/>
-                <q-input  class="q-ma-sm" :type='isPwd ? "password" : "text"' label="Contraseña" v-model="pass">
-                  <template v-slot:append>
-                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click='isPwd = !isPwd' />
-                  </template>
-                </q-input>
-                <q-input  class="q-ma-sm" :type='isPwd2 ? "password" : "text"' label="Contraseña" v-model="passConfirm">
-                  <template v-slot:append>
-                    <q-icon :name="isPwd2 ? 'visibility_off' : 'visibility'" class="cursor-pointer" @click='isPwd2 = !isPwd2' />
-                  </template>
-                </q-input>
-                <q-stepper-navigation class="row col-12 justify-end">
-                  <q-btn class="q-ma-sm" label="Continuar" @click="register(email, pass)"/>
-                </q-stepper-navigation>
-                </q-step>
-
-                <q-step
-                  :disable='newUser==false'
-                  :name="2"
-                  title="Introduce tu nombre y numero telefonico"
-                  icon="create_new_folder"
-                  :done="step > 2"
-                >
-                <q-input class="q-ma-sm" type="text" label="Nombre" v-model="name" required/>
-                  <q-stepper-navigation class="row col-12 justify-end">
-                    <q-btn class="q-ma-sm" label="Continuar" @click="updateUser()" :disable="name == ''"/>
-                  </q-stepper-navigation>
-                </q-step>
-
-                <q-step
-                  :name="3"
-                  title="Finalizado"
-                  icon="assignment"
-                >
-                  Completado.
-                  <q-stepper-navigation class="row col-12 justify-end">
-                    <q-btn class="q-ma-sm" label="Finalizar" @click="registro=false"/>
-                  </q-stepper-navigation>
-                </q-step>
-              </q-stepper>
-            </q-card-section>
-          </q-card>
-        </q-dialog>
+ 
       </div>
 </template>
 
 <script>
-import {auth} from 'src/firebase/firebaseConfig';
+import {auth, tshirtsRef, hatsRef, cupsRef, othersRef, imageRef} from 'src/firebase/firebaseConfig';
+
 export default {
   name: 'Index',
   data(){
@@ -108,6 +42,8 @@ export default {
       passConfirm: '',
       registro: false,
       step: 1,
+      data: [],
+      prueba: {},
     }
   },
   created(){
@@ -118,36 +54,79 @@ export default {
       }else{
         this.session=false;
       }
-    })
+    });
+    this.getData();
   },
   methods:{
-    register(mail, password){
-      if(this.pass == this.passConfirm){
-        auth.createUserWithEmailAndPassword(mail, password)
-        .then(() => {
-          console.log('creado');
-          this.step +=1;
-          this.newUser = true;
+    async getData(){
+      let datos = [];
+      tshirtsRef.once('value')
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = {
+            item: childSnapshot.child('item').val(),
+            cantidad: childSnapshot.child('cantidad').val(),
+            color: childSnapshot.child('color').val(),
+            descripcion: childSnapshot.child('descripcion').val(),
+            talla: childSnapshot.child('talla').val(),
+            precio: childSnapshot.child('precio').val(),
+            imgName: childSnapshot.child('imgName').val(),
+            url: childSnapshot.child('url').val(),
+            id: childSnapshot.key
+          }
+          datos.push(item);
         })
-        .catch((error) => {
-          console.log(error);
+      })
+      hatsRef.once('value')
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = {
+            item: childSnapshot.child('item').val(),
+            cantidad: childSnapshot.child('cantidad').val(),
+            color: childSnapshot.child('color').val(),
+            descripcion: childSnapshot.child('descripcion').val(),
+            url: childSnapshot.child('url').val(),
+            precio: childSnapshot.child('precio').val(),
+            id: childSnapshot.key
+          }
+          datos.push(item);
         })
-      }else{
-        console.log('no coincide');
-      }
+      })
+      cupsRef.once('value')
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = {
+            item: childSnapshot.child('item').val(),
+            cantidad: childSnapshot.child('cantidad').val(),
+            color: childSnapshot.child('color').val(),
+            descripcion: childSnapshot.child('descripcion').val(),
+            url: childSnapshot.child('url').val(),
+            precio: childSnapshot.child('precio').val(),
+            id: childSnapshot.key
+          }
+          datos.push(item);
+        })
+      })
+      othersRef.once('value')
+      .then((snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+          let item = {
+            item: childSnapshot.child('item').val(),
+            color: childSnapshot.child('color').val(),
+            cantidad: childSnapshot.child('cantidad').val(),
+            descripcion: childSnapshot.child('descripcion').val(),
+            url: childSnapshot.child('url').val(),
+            precio: childSnapshot.child('precio').val(),
+            id: childSnapshot.key
+          }
+          datos.push(item);
+        })
+      })
+      this.data = await datos;
+      console.log(this.data)
     },
-    updateUser(){
-      let user = auth.currentUser;
-      user.updateProfile({
-        displayName: this.name,
-      }).then(() => {
-        this.step +=1;
-        console.log(user);
-        console.log('correcto');
-      })
-      .catch((error) =>{
-        console.log(error);
-      })
+    addToList(item){
+      EventBus.$emit('addToList', item)
     }
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="waveBg" style="height: 90vh">
+  <div class="q-pa-sm waveBg" style="height: 90vh">
     <div class="flex flex-center align-center" style="height: 90vh">
       <q-card class="" style="width: 60vh">
         <q-card-section>
@@ -52,7 +52,7 @@ export default {
     }
   },
   created(){
-    
+
   },
   methods: {
     login(email, pass){

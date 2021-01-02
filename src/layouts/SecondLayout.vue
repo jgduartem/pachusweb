@@ -1,13 +1,15 @@
 <template>
-  <div>
-    <q-layout view="hHh Lpr lff" container style="height: 100vh" class="">
-      <q-header elevated class="bg-black">
+  <div class="waveBg">
+    <q-layout view="hHh Lpr lff" container style="height: 100vh">
+      <q-header elevated class="bg-dark">
         <q-toolbar>
-          <div class="row col-12 justify-end">
-            <q-btn class="q-ma-xs" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
-            <q-btn class="q-ma-xs" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
-            <q-btn class="q-ma-xs" outline rounded label="Nosotros" text-color="grey-3"/>
-            <q-btn class="q-ma-xs" outline rounded label="Contacto" text-color="grey-3"/>
+          <q-toolbar-title >
+            <q-btn flat to="/" label="Pachus" size="lg" />
+          </q-toolbar-title>
+          <q-space/>
+          <div>
+            <q-btn class="q-ma-xs" size="md" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
+            <q-btn class="q-ma-xs" size="md" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
             <q-btn flat @click="drawer = !drawer" round dense icon="shopping_cart" v-if="activeUser != false" />
           </div>
         </q-toolbar>
@@ -22,7 +24,7 @@
       >
         <q-scroll-area class="fit">
           <q-list padding class="menu-list">
-            <shopping-list></shopping-list>
+            <shopping-list/>
           </q-list>
         </q-scroll-area>
       </q-drawer>
@@ -68,7 +70,10 @@ export default {
       .catch((error) => {
         console.log(error);
       })
-    }
+    },
+    addToList(item){
+    console.log(item)
+  }
   },
 }
 </script>

@@ -55,7 +55,7 @@
         </q-bar>
         <q-card-section>
           <q-form>
-            <q-select v-model="category" :options="options" label="Categorias" required />
+            <q-select v-model="category" :options="options" label="Categoria" required />
             <q-input v-if="category == 'Otros'" label="Nombre" v-model="newItem.name" />
             <q-input label="Color" v-model="newItem.color" />
             <q-input v-if="category == 'Franelas'" label="Talla" v-model="newItem.talla" />  
@@ -84,7 +84,7 @@
         </q-bar>
         <q-card-section>
           <q-form>
-            <q-select v-model="category" :options="options" label="Categorias" disable />
+            <q-select filled v-model="category" :options="options" label="Categoria" disable />
             <q-input v-if="category == 'Otros'" label="Nombre" v-model="newItem.name" />
             <q-input label="Color" v-model="newItem.color" />
             <q-input v-if="category == 'Franelas'" label="Talla" v-model="newItem.talla" />  
@@ -101,12 +101,7 @@
 </template>
 
 <script>
-import {auth, db, storage} from '../firebase/firebaseConfig';
-let tshirtsRef = db.ref('inventory/tshirts');
-let cupsRef = db.ref('inventory/cups');
-let hatsRef = db.ref('inventory/hats');
-let othersRef = db.ref('inventory/others');
-let imageRef = storage.ref();
+import {auth, db, storage, tshirtsRef, hatsRef, cupsRef, othersRef, imageRef} from '../firebase/firebaseConfig';
 
 export default {
   name: 'AdminPage',
@@ -137,7 +132,7 @@ export default {
         precio: '',
         imgName: '',
       },
-      options: ['Franelas', 'Gorras', 'Tazas', 'Otros'],
+      options: ['Franela', 'Gorra', 'Taza', 'Otro'],
       category: '',
       columns: [
         {
@@ -199,7 +194,7 @@ export default {
   methods: {
     addItem(newItem, category){
       switch(category){
-        case 'Franelas':
+        case 'Franela':
           tshirtsRef.push({
             item: category,
             cantidad: newItem.cantidad,
@@ -227,7 +222,7 @@ export default {
           this.getData();
           break;
         
-        case 'Tazas':
+        case 'Taza':
           cupsRef.push({
             item: category,
             cantidad: newItem.cantidad,
@@ -240,7 +235,7 @@ export default {
           this.getData();
           break;
         
-        case 'Otros':
+        case 'Otro':
           othersRef.push({
             item: category,
             name: newItem.name,
@@ -333,21 +328,21 @@ export default {
     deleteItem(id ,category){
       console.log(category.toLowerCase())
       switch (category.toLowerCase()){
-        case 'franelas': 
+        case 'franela': 
           console.log(id)
           tshirtsRef.child(id).remove();
           this.selected = [];
           this.getData();
         break;
 
-        case 'gorras':
+        case 'gorra':
           console.log(id)
           hatsRef.child(id).remove();
           this.selected = [];
           this.getData();
         break;
 
-        case 'tazas':
+        case 'taza':
           console.log(id)
           cupsRef.child(id).remove();
           this.selected = [];
@@ -366,7 +361,7 @@ export default {
       let id = item.id
       let change = {};
       switch(category.toLowerCase()){
-        case 'franelas':
+        case 'franela':
           let updateShirtInfo = {
             item: this.category,
             cantidad: this.newItem.cantidad,
@@ -383,7 +378,7 @@ export default {
           this.modalEdit = false;
           break;
         
-        case 'gorras':
+        case 'gorra':
           let updateHatInfo = {
             item: this.category,
             cantidad: this.newItem.cantidad,
@@ -399,7 +394,7 @@ export default {
           this.modalEdit = false;
           break;
 
-        case 'tazas':
+        case 'taza':
           let updateCupsInfo = {
             item: this.category,
             cantidad: this.newItem.cantidad,

@@ -60,8 +60,8 @@
             <q-input label="Color" v-model="newItem.color" />
             <q-input v-if="category == 'Franelas'" label="Talla" v-model="newItem.talla" />  
             <q-input label="Descripcion" v-model="newItem.descripcion" />        
-            <q-input label="Cantidad" v-model="newItem.cantidad" />
-            <q-input label="Precio" v-model="newItem.precio" />
+            <q-input type="number" label="Cantidad" v-model="newItem.cantidad" />
+            <q-input type="number" label="Precio" v-model="newItem.precio" />
             <q-file  label="Adjuntar Archivo" v-model="image">
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
@@ -89,8 +89,8 @@
             <q-input label="Color" v-model="newItem.color" />
             <q-input v-if="category == 'Franelas'" label="Talla" v-model="newItem.talla" />  
             <q-input label="Descripcion" v-model="newItem.descripcion" />        
-            <q-input label="Cantidad" v-model="newItem.cantidad" />
-            <q-input label="Precio" v-model="newItem.precio" />
+            <q-input type="number" label="Cantidad" v-model="newItem.cantidad" />
+            <q-input type="number" label="Precio" v-model="newItem.precio" />
             <q-btn label="Actualizar" @click="editItem(selected[0], category)" />
           </q-form>
         </q-card-section>
@@ -124,12 +124,12 @@ export default {
       newItem: {
         item: '',
         name: '',
-        cantidad: '',
+        cantidad: 0,
         color: '',
         talla: '',
         descripcion: '',
         url: '',
-        precio: '',
+        precio: 0,
         imgName: '',
       },
       options: ['Franela', 'Gorra', 'Taza', 'Otro'],
@@ -209,7 +209,7 @@ export default {
           this.getData();
           break;
 
-        case 'Gorras':
+        case 'Gorra':
           hatsRef.push({
             item: category,
             cantidad: newItem.cantidad,

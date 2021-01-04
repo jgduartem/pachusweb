@@ -4,18 +4,19 @@
           <div v-for='item in data' :key='item.id'>
             <q-card class="q-ma-sm q-pa-sm">
               <q-card-section class="row col-12">
-                <div class="row col-3 q-mr-md">
-                  <q-img :src="item.url"/>
-                </div>
-                <div class="col-8">
-                  <div class="text-h5 q-mt-sm q-mb-xs">{{item.item}}</div>
-                  <div class="text-overline text-orange-9">{{item.color}}</div>
+                <div class="col-6">
+                  <div class="text-h4 q-mt-sm q-mb-xs">{{item.item}}</div>
+                  <div class="text-overline text-primary">{{item.color}}</div>
                   <div class="text-caption text-grey">{{item.descripcion}}</div>
+                  <div class="text-h5">$ {{item.precio}}</div>
+                </div>
+                <div class="row col-5 q-mr-md">
+                  <q-img :src="item.url"/>
                 </div>
               </q-card-section>
               <q-card-actions class="row justify-end">
                 <q-btn label="Ver" />
-                <q-btn label="Agregar al carrito" @click="addToList(item)"/>
+                <q-btn label="Agregar al carrito" v-on:click="addItem(item)" />
               </q-card-actions>
             </q-card>
             <q-space/>
@@ -27,7 +28,6 @@
 
 <script>
 import {auth, tshirtsRef, hatsRef, cupsRef, othersRef, imageRef} from 'src/firebase/firebaseConfig';
-
 export default {
   name: 'Index',
   data(){
@@ -43,7 +43,6 @@ export default {
       registro: false,
       step: 1,
       data: [],
-      prueba: {},
     }
   },
   created(){
@@ -58,6 +57,10 @@ export default {
     this.getData();
   },
   methods:{
+    addItem(item){
+      this.$store.dispatch('addItemAction', item)
+      console.log(this.$store.state.items)
+    },
     async getData(){
       let datos = [];
       tshirtsRef.once('value')
@@ -125,9 +128,6 @@ export default {
       this.data = await datos;
       console.log(this.data)
     },
-    addToList(item){
-      EventBus.$emit('addToList', item)
-    }
   }
 }
 </script>

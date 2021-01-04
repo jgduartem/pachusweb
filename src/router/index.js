@@ -2,8 +2,9 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import firebase from 'firebase'
 import {rtdbPlugin} from 'vuefire'
-
 import routes from './routes'
+
+
 
 Vue.use(VueRouter)
 Vue.use(rtdbPlugin);
@@ -32,3 +33,5 @@ export default function (/* { store, ssrContext } */) {
 
   return Router
 }
+
+

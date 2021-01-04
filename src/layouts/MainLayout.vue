@@ -2,7 +2,9 @@
   <q-layout view="lHh lpr lFf" container style="height: 100vh">
       <q-header class="row justify-between bg-dark">
         <q-toolbar>
-          <q-toolbar-title>Pachus</q-toolbar-title>
+          <q-toolbar-title>
+            Pachus
+            </q-toolbar-title>
           <div>
             <q-btn class="q-ma-xs" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
             <q-btn class="q-ma-xs" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
@@ -49,3 +51,21 @@ export default {
   },
 }
 </script>
+<style>
+.waveBg { 
+  position: relative; 
+  background-color: #33CDD1; 
+  background-image: linear-gradient(315deg,  #F64965 0%, #33CDD1 74%); 
+} 
+.waveBg:before { 
+  content: ""; 
+  position: absolute; 
+  bottom: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 250px; 
+  background: url('https://media.geeksforgeeks.org/wp-content/uploads/20200326181026/wave3.png'); 
+  background-size: cover; 
+  background-repeat: no-repeat; 
+} 
+</style>

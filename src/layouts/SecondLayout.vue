@@ -1,8 +1,11 @@
 <template>
-  <div class="waveBg">
-    <q-layout view="hHh Lpr lff" container style="height: 100vh">
-      <q-header elevated class="bg-dark">
+  <div>
+    <q-layout view="hHh Lpr lff" container style="height: 100vh; width: 100vw">
+      <q-header elevated class="pachuRosa">
         <q-toolbar>
+          <q-avatar>
+            <q-img src="ISO.jpg"/>
+          </q-avatar>
           <q-toolbar-title >
             <q-btn flat to="/" label="Pachus" size="lg" />
           </q-toolbar-title>
@@ -79,5 +82,7 @@ export default {
 </script>
 
 <style>
-
+.pachuRosa{
+  background-color: #F64965;
+}
 </style>

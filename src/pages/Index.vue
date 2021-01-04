@@ -1,29 +1,11 @@
 <template>
-      <div class="q-pa-sm">
+      <div>
         <div style="height: 90vh">
-          <div style="height: 50vh">
-            <q-img src="public/pachuslogo.png"/>
+          <div class="q-my-md flex flex-center" >
+            <q-img width="50%" height="50%" src="pachuslogo.png"/>
           </div>
-          <div v-for='item in data' :key='item.id'>
-            <q-card class="q-ma-xs q-mb-lg q-pa-sm">
-              <q-card-section class="row col-12">
-                <div class="col-6">
-                  <div class="text-h4 q-mt-sm q-mb-xs">{{item.item}}</div>
-                  <div class="text-overline text-primary">{{item.color}}</div>
-                  <div class="text-caption text-grey">{{item.descripcion}}</div>
-                  <div class="text-h5">$ {{item.precio}}</div>
-                </div>
-                <div class="row col-5 q-mr-md">
-                  <q-img :src="item.url"/>
-                </div>
-              </q-card-section>
-              <q-card-actions class="row justify-end">
-                <q-btn label="Ver" />
-                <q-btn label="Agregar al carrito" @click="addItem(item)" />
-              </q-card-actions>
-            </q-card>
-            <q-space/>
-          </div>
+          <Navigation/>
+          <Card-items :data='data'/>       
         </div>
  
       </div>
@@ -31,7 +13,10 @@
 
 <script>
 import {auth, tshirtsRef, hatsRef, cupsRef, othersRef, imageRef} from 'src/firebase/firebaseConfig';
+import Navigation from 'src/components/Navigation.vue';
+import CardItems from 'src/components/CardItems'
 export default {
+  components: { Navigation, CardItems },
   name: 'Index',
   data(){
     return{
@@ -61,10 +46,6 @@ export default {
     this.getData();
   },
   methods:{
-    addItem(item){
-      this.$store.dispatch('addItemAction', item)
-      console.log(this.$store.state.items)
-    },
     async getData(){
       let datos = [];
       tshirtsRef.once('value')
@@ -143,22 +124,5 @@ export default {
 .pachuRosa{
   background-color: #F64965;
 }
-.waveBg { 
-  position: relative; 
-  background-color: #33CDD1; 
-  background-image: linear-gradient(315deg,  #33CDD1 0%, #F64965 74%); 
-} 
-  
-.waveBg:before { 
-  content: ""; 
-  position: absolute; 
-  bottom: 0; 
-  left: 0; 
-  width: 100%; 
-  height: 250px; 
-  background: url('https://media.geeksforgeeks.org/wp-content/uploads/20200326181026/wave3.png'); 
-  background-size: cover; 
-  background-repeat: no-repeat; 
-} 
 
 </style>

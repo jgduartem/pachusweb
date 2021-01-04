@@ -27,18 +27,19 @@ export default function (/* { ssrContext } */) {
     mutations: {
       addItem(state, itemToAdd){
         state.item = itemToAdd
-        state.itemPrice += itemToAdd.precio;
+        state.itemPrice += parseInt(itemToAdd.precio);
         console.log(state.itemPrice)
         state.items = [state.item,...state.items]
       },
-      deleteItem(state, id){
+      deleteItem(state, itemToAdd){
+        let index = 0
         let newArr = []
-        state.items.filter(e => {
-          if(e.id !== id){
-            newArr.push(e)
+        state.items.map(e => {
+          if(e.id == itemToAdd.id){
+            index = state.items.indexOf(e);
           }
         })
-        state.items = newArr;
+        state.items.splice(index, 1);
       }
     },
     actions:{

@@ -16,7 +16,7 @@
               </q-card-section>
               <q-card-actions class="row justify-end">
                 <q-btn label="Ver" />
-                <q-btn label="Agregar al carrito" v-on:click="addItem(item)" />
+                <q-btn label="Agregar al carrito" @click="addItem(item)" />
               </q-card-actions>
             </q-card>
             <q-space/>
@@ -43,6 +43,7 @@ export default {
       registro: false,
       step: 1,
       data: [],
+      sumaprueba: 0
     }
   },
   created(){

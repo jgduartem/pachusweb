@@ -1,8 +1,11 @@
 <template>
-      <div class="q-pa-md">
+      <div class="q-pa-sm">
         <div style="height: 90vh">
+          <div style="height: 50vh">
+            <q-img src="public/pachuslogo.png"/>
+          </div>
           <div v-for='item in data' :key='item.id'>
-            <q-card class="q-ma-sm q-pa-sm">
+            <q-card class="q-ma-xs q-mb-lg q-pa-sm">
               <q-card-section class="row col-12">
                 <div class="col-6">
                   <div class="text-h4 q-mt-sm q-mb-xs">{{item.item}}</div>

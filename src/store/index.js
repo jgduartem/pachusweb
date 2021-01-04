@@ -33,13 +33,16 @@ export default function (/* { ssrContext } */) {
       },
       deleteItem(state, itemToAdd){
         let index = 0
-        let newArr = []
+        let priceToSubstract = 0
         state.items.map(e => {
           if(e.id == itemToAdd.id){
             index = state.items.indexOf(e);
+            priceToSubstract = e.precio
           }
         })
         state.items.splice(index, 1);
+        state.itemPrice -= parseInt(priceToSubstract);
+        console.log(state.itemPrice)
       }
     },
     actions:{

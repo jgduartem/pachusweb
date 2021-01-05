@@ -1,8 +1,8 @@
 <template>
       <div>
         <div style="height: 90vh">
-          <div class="q-my-md flex flex-center" >
-            <q-img width="50%" height="50%" src="pachuslogo.png"/>
+          <div class="q-mb-md flex flex-center" >
+            <q-img class="q-my-md" width="50%" height="50%" src="pachuslogo.png"/>
           </div>
           <Navigation/>
           <Card-items :data='data'/>       

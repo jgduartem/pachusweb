@@ -70,7 +70,9 @@ export default {
       let datos = [];
       switch (option) {
         case "clothes":
-          clothesRef.once("value").then((snapshot) => {
+          clothesRef
+          .once("value")
+          .then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
               let item = {
                 item: childSnapshot.child("item").val(),
@@ -92,7 +94,9 @@ export default {
           break;
 
         case "hats":
-          hatsRef.once("value").then((snapshot) => {
+          hatsRef
+          .once("value")
+          .then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
               let item = {
                 item: childSnapshot.child("item").val(),
@@ -110,7 +114,9 @@ export default {
           this.data = await datos;
           break;
         case "cups":
-          cupsRef.once("value").then((snapshot) => {
+          cupsRef
+          .once("value")
+          .then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
               let item = {
                 item: childSnapshot.child("item").val(),
@@ -129,7 +135,9 @@ export default {
           break;
 
         case "others":
-          othersRef.once("value").then((snapshot) => {
+          othersRef
+          .once("value")
+          .then((snapshot) => {
             snapshot.forEach((childSnapshot) => {
               let item = {
                 item: childSnapshot.child("item").val(),

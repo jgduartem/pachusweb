@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { db, usersRef } from "src/firebase/firebaseConfig";
 
 // import example from './module-example'
 
@@ -19,23 +20,34 @@ export default function (/* { ssrContext } */) {
     modules: {
       // example
     },
-    state:{
+    state: {
       items: [],
       item: null,
-      itemPrice: 0
+      itemPrice: 0,
+      actualUser: {
+        uid: '',
+        name: '',
+        email: '',
+        phone: '',
+        shoppingCart: [],
+      }
     },
     mutations: {
-      addItem(state, itemToAdd){
+      async addItem(state, itemToAdd) {
+        const userRef = db.ref("users/" + state.actualUser.uid);
         state.item = itemToAdd
         state.itemPrice += parseInt(itemToAdd.precio);
         console.log(state.itemPrice)
-        state.items = [state.item,...state.items]
+        state.items = [state.item, ...state.items]
+        await userRef.update({
+          shoppingCart: [state.items]
+        })
       },
-      deleteItem(state, itemToAdd){
+      deleteItem(state, itemToAdd) {
         let index = 0
         let priceToSubstract = 0
         state.items.map(e => {
-          if(e.id == itemToAdd.id){
+          if (e.id == itemToAdd.id) {
             index = state.items.indexOf(e);
             priceToSubstract = e.precio
           }
@@ -43,17 +55,38 @@ export default function (/* { ssrContext } */) {
         state.items.splice(index, 1);
         state.itemPrice -= parseInt(priceToSubstract);
         console.log(state.itemPrice)
+      },
+      openItem(state, item) {
+        state.item = item
+      },
+      getUserId(state, id){
+        state.actualUser.uid = id;
+      },
+      getUserData(state, user){
+        state.actualUser.phone = user.phone
+        state.actualUser.name = user.name;
+        state.actualUser.email = user.email
+        console.log(state.actualUser)
       }
     },
-    actions:{
-      addItemAction(context, item){
+    actions: {
+      addItemAction(context, item) {
         context.commit('addItem', item);
       },
-      deleteItemAction(context, id){
+      deleteItemAction(context, id) {
         context.commit('deleteItem', id);
+      },
+      openItemAction(context, item) {
+        context.commit('openItem', item);
+      },
+      getUserIdAction(context, id){
+        context.commit('getUserId', id);
+      },
+      getUserDataAction(context, user){
+        context.commit('getUserData', user);
       }
     },
-    getters:{
+    getters: {
 
     },
 

@@ -30,6 +30,7 @@ export default function (/* { ssrContext } */) {
         email: '',
         phone: '',
         shoppingCart: [],
+        cartPrice: ''
       }
     },
     mutations: {
@@ -40,10 +41,12 @@ export default function (/* { ssrContext } */) {
         console.log(state.itemPrice)
         state.items = [state.item, ...state.items]
         await userRef.update({
-          shoppingCart: [state.items]
+          shoppingCart: [state.items],
+          cartPrice: state.itemPrice
         })
       },
-      deleteItem(state, itemToAdd) {
+      async deleteItem(state, itemToAdd) {
+        const userRef = db.ref('users/' + state.actualUser.uid)
         let index = 0
         let priceToSubstract = 0
         state.items.map(e => {
@@ -54,6 +57,10 @@ export default function (/* { ssrContext } */) {
         })
         state.items.splice(index, 1);
         state.itemPrice -= parseInt(priceToSubstract);
+        await userRef.update({
+          shoppingCart: [state.items],
+          cartPrice: state.itemPrice
+        })
         console.log(state.itemPrice)
       },
       openItem(state, item) {

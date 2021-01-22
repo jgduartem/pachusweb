@@ -298,7 +298,7 @@ export default {
         imgName: "",
       },
       options: ["Ropa", "Gorra", "Taza", "Otro"],
-      category: "",
+      category: '',
       columns: [
         {
           name: "select",

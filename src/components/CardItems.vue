@@ -1,11 +1,11 @@
 <template>
-  <div class="q-mt-lg row bg-grey-2">
+  <div class="q-mt-lg row col-12 bg-grey-2">
     <div
       v-for="item in data"
       :key="item.id"
       class="row col-xs-6 col-sm-6 col-md-4 col-lg-4 justify-center"
     >
-      <div class="q-ma-md">
+      <div class="q-pa-md">
         <q-card class="row col-12 bg-grey-2">
           <q-img :src="item.url" height="auto" width="100%" />
 
@@ -13,11 +13,11 @@
             <q-btn
               fab
               icon="shopping_cart"
-              @click="item.item != 'Ropa' ? addItem(item) : test() "
+              @click="addItem(item)"
               text-color="white"
               class="pachuAzul absolute"
               style="top: 0; right: 12px; transform: translateY(-50%)"
-              :disable="enableShop==false"
+              :disable="enableShop == false"
             />
             <div class="row no-wrap items-center">
               <div class="col text-h6 ellipsis">
@@ -36,7 +36,14 @@
 
           <q-card-actions class="row col-12 justify-between">
             <div class="q-ml-md text-subtitle1">$ {{ item.precio }}</div>
-            <q-btn class="q-mr-md" flat color="dark"> Ver </q-btn>
+            <q-btn
+              class="q-mr-md"
+              flat
+              color="dark"
+              label="Ver"
+              @click="openItem(item)"
+              to="/View"
+            />
           </q-card-actions>
         </q-card>
       </div>
@@ -45,7 +52,8 @@
 </template>
 
 <script>
-import { auth } from 'src/firebase/firebaseConfig';
+import { auth, db } from "src/firebase/firebaseConfig";
+import ProductView from "src/pages/ProductView";
 export default {
   name: "CardItems",
   props: {
@@ -53,25 +61,26 @@ export default {
   },
   data() {
     return {
-      enableShop: false
+      enableShop: false,
     };
   },
-  mounted(){
+  mounted() {
     auth.onAuthStateChanged((user) => {
-      if(user){
+      if (user) {
         this.enableShop = true;
-      }else{
+      } else {
         this.enableShop = false;
       }
-    })
+    });
   },
   methods: {
-    test(){
-      console.log('test')
-    },
     addItem(item) {
       this.$store.dispatch("addItemAction", item);
       console.log(this.$store.state.items);
+    },
+    openItem(item) {
+      this.$store.dispatch("openItemAction", item);
+      console.log(this.$store.state.item);
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-  <q-dialog v-model="registro" persistent @hide="step = 1">
+  <q-dialog v-model="registro" persistent @hide="hide()">
     <q-card>
       <q-bar>
         <q-space />
@@ -73,6 +73,13 @@
               v-model="name"
               required
             />
+            <q-input
+              class="q-ma-sm"
+              type="phone"
+              label="Telefono"
+              v-model="phone"
+              required
+            />
             <q-stepper-navigation class="row col-12 justify-end">
               <q-btn
                 class="q-ma-sm"
@@ -100,14 +107,18 @@
 </template>
 
 <script>
+import { auth, db } from "src/firebase/firebaseConfig";
+import router from 'src/router';
+const userRef = db.ref("users");
 export default {
   name: "Registration",
   data() {
     return {
-      registro: false,
+      registro: true,
       step: 1,
       email: "",
       pass: "",
+      phone: "",
       isPwd: true,
       isPwd2: true,
       passConfirm: "",
@@ -116,6 +127,10 @@ export default {
     };
   },
   methods: {
+    hide(){
+      this.step = 1;
+      this.$router.push('/');
+    },
     register(mail, password) {
       if (this.pass == this.passConfirm) {
         auth
@@ -132,7 +147,7 @@ export default {
         console.log("no coincide");
       }
     },
-    updateUser() {
+    async updateUser() {
       let user = auth.currentUser;
       user
         .updateProfile({
@@ -146,6 +161,13 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+        await userRef.child(user.uid).update({
+          name: this.name,
+          phone: this.phone,
+          email: this.email,
+          shopingCart: []
+        })
+
     },
   },
 };

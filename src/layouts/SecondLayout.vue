@@ -1,19 +1,18 @@
 <template>
   <div>
-    <q-layout view="hHh Lpr lff" container style="height: 100vh; width: 100vw">
+    <q-layout view="hHh Lpr lff" style="height: 100vh; width: 100vw">
       <q-header elevated class="pachuRosa">
         <q-toolbar>
-          <q-avatar>
+          <q-avatar @click="home()">
             <q-img src="ISO.jpg"/>
           </q-avatar>
-          <q-toolbar-title >
-            <q-btn flat to="/" label="Pachus" size="lg" />
-          </q-toolbar-title>
           <q-space/>
           <div>
             <q-btn class="q-ma-xs" size="md" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
+            <q-btn class="q-ma-xs" size="md" outline rounded label="Registrate" to="/Register" v-if="activeUser != true" text-color="grey-3" />
+            <q-btn class="q-ma-xs" size="md" outline rounded label="Mi Cuenta" v-if="activeUser != false" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
-            <q-btn flat @click="drawer = !drawer" round dense icon="shopping_cart" v-if="activeUser != false" />
+            <q-btn class="q-ma-xs" size="md" flat @click="drawer = !drawer" round dense icon="shopping_cart" v-if="activeUser != false" />
           </div>
         </q-toolbar>
       </q-header>
@@ -44,6 +43,7 @@
 <script>
 import {auth} from 'src/firebase/firebaseConfig';
 import ShoppingList from 'src/pages/ShoppingList';
+import router from 'src/router';
 export default {
   name: 'SecondLayout',
   components:{ShoppingList},
@@ -64,6 +64,9 @@ export default {
     })
   },
   methods: {
+    home(){
+      this.$router.push('/')
+    },
     logout(){
       auth.signOut()
       .then(() => {

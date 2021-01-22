@@ -5,40 +5,16 @@
         <q-img class="q-my-md" width="20%" height="50%" src="pachuslogo.png" />
       </div>
       <Navigation />
-      <div class="row col-12">
-        <div class="col-5"></div>
-        <div class="col-7 text-center">
-          <div class="q-pa-md">
-            <q-carousel
-              animated
-              v-model="slide"
-              infinite
-              :autoplay="2500"
-              transition-prev="slide-right"
-              transition-next="slide-left"
-              @mouseenter="autoplay = false"
-              @mouseleave="autoplay = true"
-            >
-              <q-carousel-slide
-                :name="1"
-                img-src="jesus.jpeg"
-              />
-              <q-carousel-slide
-                :name="2"
-                img-src="https://cdn.quasar.dev/img/parallax1.jpg"
-              />
-              <q-carousel-slide
-                :name="3"
-                img-src="https://cdn.quasar.dev/img/parallax2.jpg"
-              />
-              <q-carousel-slide
-                :name="4"
-                img-src="https://cdn.quasar.dev/img/quasar.jpg"
-              />
-            </q-carousel>
-          </div>
-        </div>
+      <div class="row col-12 justify-end">
+        <q-select
+          @input="changeData(option)"
+          v-model="option"
+          class="q-pa-md col-xs-12 col-sm-2 col-md-2 col-lg-2"
+          label="Ordenar por"
+          :options="['Ropa', 'Tazas', 'Gorras', 'Otros']"
+        />
       </div>
+      <CardItems :data="data" v-if="active == true" />
     </div>
   </div>
 </template>
@@ -51,11 +27,12 @@ import {
   cupsRef,
   othersRef,
   imageRef,
+  usersRef,
 } from "src/firebase/firebaseConfig";
 import Navigation from "src/components/Navigation.vue";
-
+import CardItems from "src/components/CardItems";
 export default {
-  components: { Navigation },
+  components: { Navigation, CardItems },
   name: "Index",
   data() {
     return {
@@ -68,85 +45,145 @@ export default {
       pass: "",
       passConfirm: "",
       registro: false,
-      step: 1,
       data: [],
       slide: 1,
+      active: false,
+      option: "",
     };
   },
   created() {
-    auth.onAuthStateChanged((user) => {
+    auth.onAuthStateChanged(async (user) => {
       if (user) {
         console.log(user);
+        await this.$store.dispatch("getUserIdAction", user.uid);
+        await this.getUserData()
         this.session = true;
       } else {
         this.session = false;
       }
     });
-    this.getData();
+    this.getData("clothes");
   },
   methods: {
-    async getData() {
+    getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
+    },
+    async changeData(option) {
+      this.active = false;
+      switch (option) {
+        case "Ropa":
+          await this.getData("clothes");
+          break;
+
+        case "Tazas":
+          await this.getData("cups");
+          break;
+
+        case "Gorras":
+          await this.getData("hats");
+          break;
+
+        case "Otros":
+          await this.getData("others");
+      }
+    },
+    async getData(option) {
+      console.log(option);
       let datos = [];
-      clothesRef.once("value").then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = {
-            item: childSnapshot.child("item").val(),
-            cantidad: childSnapshot.child("cantidad").val(),
-            color: childSnapshot.child("color").val(),
-            descripcion: childSnapshot.child("descripcion").val(),
-            talla: childSnapshot.child("talla").val(),
-            precio: childSnapshot.child("precio").val(),
-            imgName: childSnapshot.child("imgName").val(),
-            url: childSnapshot.child("url").val(),
-            id: childSnapshot.key,
-          };
-          datos.push(item);
-        });
-      });
-      hatsRef.once("value").then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = {
-            item: childSnapshot.child("item").val(),
-            cantidad: childSnapshot.child("cantidad").val(),
-            color: childSnapshot.child("color").val(),
-            descripcion: childSnapshot.child("descripcion").val(),
-            url: childSnapshot.child("url").val(),
-            precio: childSnapshot.child("precio").val(),
-            id: childSnapshot.key,
-          };
-          datos.push(item);
-        });
-      });
-      cupsRef.once("value").then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = {
-            item: childSnapshot.child("item").val(),
-            cantidad: childSnapshot.child("cantidad").val(),
-            color: childSnapshot.child("color").val(),
-            descripcion: childSnapshot.child("descripcion").val(),
-            url: childSnapshot.child("url").val(),
-            precio: childSnapshot.child("precio").val(),
-            id: childSnapshot.key,
-          };
-          datos.push(item);
-        });
-      });
-      othersRef.once("value").then((snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-          let item = {
-            item: childSnapshot.child("item").val(),
-            color: childSnapshot.child("color").val(),
-            cantidad: childSnapshot.child("cantidad").val(),
-            descripcion: childSnapshot.child("descripcion").val(),
-            url: childSnapshot.child("url").val(),
-            precio: childSnapshot.child("precio").val(),
-            id: childSnapshot.key,
-          };
-          datos.push(item);
-        });
-      });
-      this.data = await datos;
-      console.log(this.data);
+      switch (option) {
+        case "clothes":
+          clothesRef.once("value").then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              let item = {
+                item: childSnapshot.child("item").val(),
+                name: childSnapshot.child("name").val(),
+                cantidad: childSnapshot.child("cantidad").val(),
+                color: childSnapshot.child("color").val(),
+                descripcion: childSnapshot.child("descripcion").val(),
+                talla: childSnapshot.child("talla").val(),
+                precio: childSnapshot.child("precio").val(),
+                imgName: childSnapshot.child("imgName").val(),
+                url: childSnapshot.child("url").val(),
+                id: childSnapshot.key,
+              };
+              datos.push(item);
+            });
+          });
+          this.data = await datos;
+          this.active = true;
+          break;
+
+        case "hats":
+          hatsRef.once("value").then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              let item = {
+                item: childSnapshot.child("item").val(),
+                name: childSnapshot.child("name").val(),
+                cantidad: childSnapshot.child("cantidad").val(),
+                color: childSnapshot.child("color").val(),
+                descripcion: childSnapshot.child("descripcion").val(),
+                url: childSnapshot.child("url").val(),
+                precio: childSnapshot.child("precio").val(),
+                id: childSnapshot.key,
+              };
+              datos.push(item);
+            });
+          });
+          this.data = await datos;
+          this.active = true;
+          break;
+        case "cups":
+          cupsRef.once("value").then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              let item = {
+                item: childSnapshot.child("item").val(),
+                name: childSnapshot.child("name").val(),
+                cantidad: childSnapshot.child("cantidad").val(),
+                color: childSnapshot.child("color").val(),
+                descripcion: childSnapshot.child("descripcion").val(),
+                url: childSnapshot.child("url").val(),
+                precio: childSnapshot.child("precio").val(),
+                id: childSnapshot.key,
+              };
+              datos.push(item);
+            });
+          });
+          this.data = await datos;
+          this.active = true;
+          break;
+
+        case "others":
+          othersRef.once("value").then((snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+              let item = {
+                item: childSnapshot.child("item").val(),
+                name: childSnapshot.child("name").val(),
+                color: childSnapshot.child("color").val(),
+                cantidad: childSnapshot.child("cantidad").val(),
+                descripcion: childSnapshot.child("descripcion").val(),
+                url: childSnapshot.child("url").val(),
+                precio: childSnapshot.child("precio").val(),
+                id: childSnapshot.key,
+              };
+              datos.push(item);
+            });
+          });
+          this.data = await datos;
+          this.active = true;
+          console.log(this.data);
+          break;
+      }
     },
   },
 };

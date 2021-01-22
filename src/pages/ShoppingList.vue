@@ -28,8 +28,8 @@ export default {
       }
     },
     methods:{
-      deleteItem(id){
-        this.$store.dispatch('deleteItemAction', id)
+      deleteItem(item){
+        this.$store.dispatch('deleteItemAction', item)
       }
     },
 }

@@ -76,6 +76,8 @@ export default {
           actualUser.name = await snapshot.val()[id].name;
           actualUser.email = await snapshot.val()[id].email;
           actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
           await this.$store.dispatch("getUserDataAction", actualUser);
         });
     },

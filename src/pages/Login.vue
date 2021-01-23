@@ -58,7 +58,7 @@ export default {
     login(email, pass){
       auth.signInWithEmailAndPassword(email, pass).then(() =>{
         console.log('autenticado')
-        this.$router.replace("/Admin");
+        this.$router.replace("/");
       })
       .catch((error) => {
         console.log(error);

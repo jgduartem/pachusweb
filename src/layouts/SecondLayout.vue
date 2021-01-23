@@ -72,6 +72,7 @@ export default {
       .then(() => {
         console.log('logOut');
         this.activeUser = false
+        this.$store.dispatch('cleanUserDataAction')
       })
       .catch((error) => {
         console.log(error);

@@ -48,14 +48,9 @@
         </q-card-section>
         <q-card-actions>
           <div class="row col-12 justify-center">
-            <q-btn
-
-              color="primary"
-              icon="add_circle"
-              @click="count++"
-            />
+            <q-btn color="primary" icon="add_circle" @click="count++" />
             <q-input
-                          class="col-8"
+              class="col-8"
               input-class="text-center text-h6"
               v-model="count"
               type="number"

@@ -75,7 +75,17 @@ export default {
   },
   methods: {
     addItem(item) {
-      this.$store.dispatch("addItemAction", item);
+      let itemToAdd = {
+        name: item.name,
+        color: item.color,
+        descripcion: item.descripcion,
+        cantidad: 1,
+        url: item.url,
+        id: item.id,
+        precio: item.precio,
+        item: item.item
+      }
+      this.$store.dispatch("addItemAction", itemToAdd);
       console.log(this.$store.state.items);
     },
     openItem(item) {

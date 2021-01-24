@@ -34,6 +34,9 @@
       <q-page-container>
         <q-page>
          <router-view></router-view>
+          <q-page-sticky position="bottom-right" :offset="[18, 18]">
+            <q-btn fab icon="fab fa-whatsapp" color="green" @click="openWhatsapp()" />
+          </q-page-sticky>
         </q-page>
       </q-page-container>
     </q-layout>
@@ -64,6 +67,9 @@ export default {
     })
   },
   methods: {
+    openWhatsapp(){
+      window.open('https://api.whatsapp.com/send?phone=584248994407&text=Hola!')
+    },
     home(){
       this.$router.push('/')
     },
@@ -72,6 +78,7 @@ export default {
       .then(() => {
         console.log('logOut');
         this.activeUser = false
+        this.$store.dispatch('cleanUserDataAction')
       })
       .catch((error) => {
         console.log(error);

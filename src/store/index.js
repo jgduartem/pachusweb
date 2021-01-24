@@ -36,21 +36,49 @@ export default function (/* { ssrContext } */) {
     mutations: {
       async addItem(state, itemToAdd) {
         const userRef = db.ref("users/" + state.actualUser.uid);
+        let exist = false;
+        let repeatedItem = null;
+        let repeatedIndex = null
         state.item = itemToAdd
-        state.itemPrice += parseInt(itemToAdd.precio);
-        console.log(state.itemPrice)
-        state.items = [state.item, ...state.items]
-        await userRef.update({
-          shoppingCart: [state.items],
-          cartPrice: state.itemPrice
-        })
+        if (state.items.length > 0) {
+          state.items.map((i, index) => {
+            if (i.id == state.item.id) {
+              exist = true
+              repeatedItem = i.id
+              repeatedIndex = index
+            }
+          })
+          if (exist == true) {
+            console.log('repetido', repeatedItem, repeatedIndex)
+            state.items[repeatedIndex].cantidad += 1;
+            state.itemPrice += parseInt(itemToAdd.precio);
+            await userRef.update({
+              shoppingCart: state.items,
+              cartPrice: state.itemPrice
+            })
+          } else {
+            state.items = [state.item, ...state.items]
+            state.itemPrice += parseInt(itemToAdd.precio);
+            await userRef.update({
+              shoppingCart: state.items,
+              cartPrice: state.itemPrice
+            })
+          }
+        } else {
+          state.items = [state.item, ...state.items]
+          state.itemPrice += parseInt(itemToAdd.precio);
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
+        }
       },
-      async deleteItem(state, itemToAdd) {
+      async deleteItem(state, itemToDelete) {
         const userRef = db.ref('users/' + state.actualUser.uid)
         let index = 0
         let priceToSubstract = 0
         state.items.map(e => {
-          if (e.id == itemToAdd.id) {
+          if (e.id == itemToDelete.id) {
             index = state.items.indexOf(e);
             priceToSubstract = e.precio
           }
@@ -66,31 +94,53 @@ export default function (/* { ssrContext } */) {
       openItem(state, item) {
         state.item = item
       },
-      getUserId(state, id){
+      getUserId(state, id) {
         state.actualUser.uid = id;
       },
-      getUserData(state, user){
-        state.actualUser.phone = user.phone
+      getUserData(state, user) {
+        state.actualUser.phone = user.phone;
         state.actualUser.name = user.name;
-        state.actualUser.email = user.email
+        state.actualUser.email = user.email;
+        if (user.shoppingCart) {
+          state.items = user.shoppingCart;
+        }
+        if (user.itemPrice) {
+          state.itemPrice = user.itemPrice;
+        }
         console.log(state.actualUser)
+      },
+      cleanUserData(state) {
+        state.items = []
+        state.item = null
+        state.itemPrice = 0;
+        state.actualUser = {
+          uid: '',
+          name: '',
+          email: '',
+          phone: '',
+          shoppingCart: [],
+          cartPrice: ''
+        };
       }
     },
     actions: {
       addItemAction(context, item) {
         context.commit('addItem', item);
       },
-      deleteItemAction(context, id) {
-        context.commit('deleteItem', id);
+      deleteItemAction(context, item) {
+        context.commit('deleteItem', item);
       },
       openItemAction(context, item) {
         context.commit('openItem', item);
       },
-      getUserIdAction(context, id){
+      getUserIdAction(context, id) {
         context.commit('getUserId', id);
       },
-      getUserDataAction(context, user){
+      getUserDataAction(context, user) {
         context.commit('getUserData', user);
+      },
+      cleanUserDataAction(context){
+        context.commit('cleanUserData');
       }
     },
     getters: {

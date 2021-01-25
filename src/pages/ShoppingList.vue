@@ -19,7 +19,7 @@
 </template>
 
 <script>
-
+import { usersRef } from "src/firebase/firebaseConfig";
 export default {
     name: 'ShoppingList',
     data(){
@@ -28,8 +28,25 @@ export default {
       }
     },
     methods:{
+      async getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
+    },
       deleteItem(item){
         this.$store.dispatch('deleteItemAction', item)
+        this.getUserData()
       }
     },
 }

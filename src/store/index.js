@@ -52,8 +52,18 @@ export default function (/* { ssrContext } */) {
             })
             if (exist == true) {
               state.items[repeatedIndex].talla[0].cantidad += state.item.talla[0].cantidad
+              state.itemPrice += parseInt(state.item.precio*state.item.talla[0].cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
             } else {
               state.items.push(state.item)
+              state.itemPrice += parseInt(state.item.precio*state.item.talla[0].cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
             }
             console.log(state.items)
           } else {
@@ -65,13 +75,28 @@ export default function (/* { ssrContext } */) {
             })
             if(exist == true){
               state.items[repeatedIndex].cantidad += state.item.cantidad;
+              state.itemPrice += parseInt(state.item.precio*state.item.cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
             }else{
               state.items.push(state.item)
+              state.itemPrice += parseInt(state.item.precio*state.item.cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
             }
             console.log(state.items)
           }
         } else {
           state.items.push(state.item)
+          state.itemPrice += parseInt(state.item.precio*state.item.cantidad)
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
         }
       },
       async deleteItem(state, itemToDelete) {

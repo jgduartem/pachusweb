@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { auth } from "src/firebase/firebaseConfig";
+import { auth, usersRef } from "src/firebase/firebaseConfig";
 import router from "src/router";
 export default {
   name: "ProductView",
@@ -106,6 +106,22 @@ export default {
     }
   },
   methods: {
+    async getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
+    },
     setOptions() {
       this.itemToShow.talla.forEach((item) => {
         this.options.push(item.talla);
@@ -117,8 +133,9 @@ export default {
         itemToAdd = {
           item: item.item,
           name: item.name,
+          color: item.color,
           descripcion: item.descripcion,
-          cantidad: count,
+          cantidad: this.count,
           talla: [{talla: this.size, cantidad: this.count}],
           url: item.url,
           precio: item.precio,
@@ -136,6 +153,7 @@ export default {
         };
       }
       this.$store.dispatch("addItemAction", itemToAdd);
+      this.getUserData()
     },
   },
 };

@@ -41,36 +41,37 @@ export default function (/* { ssrContext } */) {
         let repeatedIndex = null
         state.item = itemToAdd
         if (state.items.length > 0) {
-          state.items.map((i, index) => {
-            if (i.id == state.item.id) {
-              exist = true
-              repeatedItem = i.id
-              repeatedIndex = index
+          if (state.item.item == 'Ropa') {
+            state.items.map((i, index) => {
+              if (i.id == state.item.id && i.talla[0].talla == state.item.talla[0].talla) {
+                exist = true;
+                repeatedItem = i;
+                repeatedIndex = index;
+                console.log('yes')
+              }
+            })
+            if (exist == true) {
+              state.items[repeatedIndex].talla[0].cantidad += state.item.talla[0].cantidad
+            } else {
+              state.items.push(state.item)
             }
-          })
-          if (exist == true) {
-            console.log('repetido', repeatedItem, repeatedIndex)
-            state.items[repeatedIndex].cantidad += 1;
-            state.itemPrice += parseInt(itemToAdd.precio);
-            await userRef.update({
-              shoppingCart: state.items,
-              cartPrice: state.itemPrice
-            })
+            console.log(state.items)
           } else {
-            state.items = [state.item, ...state.items]
-            state.itemPrice += parseInt(itemToAdd.precio);
-            await userRef.update({
-              shoppingCart: state.items,
-              cartPrice: state.itemPrice
+            state.items.map((i, index) => {
+              if (i.id == state.item.id) {
+                exist = true;
+                repeatedIndex = index;
+              }
             })
+            if(exist == true){
+              state.items[repeatedIndex].cantidad += state.item.cantidad;
+            }else{
+              state.items.push(state.item)
+            }
+            console.log(state.items)
           }
         } else {
-          state.items = [state.item, ...state.items]
-          state.itemPrice += parseInt(itemToAdd.precio);
-          await userRef.update({
-            shoppingCart: state.items,
-            cartPrice: state.itemPrice
-          })
+          state.items.push(state.item)
         }
       },
       async deleteItem(state, itemToDelete) {
@@ -98,14 +99,17 @@ export default function (/* { ssrContext } */) {
         state.actualUser.uid = id;
       },
       getUserData(state, user) {
+        console.log(user)
         state.actualUser.phone = user.phone;
         state.actualUser.name = user.name;
         state.actualUser.email = user.email;
         if (user.shoppingCart) {
           state.items = user.shoppingCart;
+          state.actualUser.shoppingCart = user.shoppingCart;
         }
         if (user.itemPrice) {
           state.itemPrice = user.itemPrice;
+          state.actualUser.cartPrice = user.itemPrice;
         }
         console.log(state.actualUser)
       },
@@ -139,7 +143,7 @@ export default function (/* { ssrContext } */) {
       getUserDataAction(context, user) {
         context.commit('getUserData', user);
       },
-      cleanUserDataAction(context){
+      cleanUserDataAction(context) {
         context.commit('cleanUserData');
       }
     },

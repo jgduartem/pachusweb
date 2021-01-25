@@ -42,7 +42,7 @@
               icon="shopping_cart"
               label="Agregar al carrito"
               @click="addItem(itemToShow, count)"
-              :disable="enableShop == false || count == 0"
+              :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
             />
           </div>
         </q-card-section>
@@ -112,10 +112,30 @@ export default {
       });
     },
     addItem(item, count) {
-      console.log(count);
-      for (let i = 0; i < count; i++) {
-        this.$store.dispatch("addItemAction", item);
+      let itemToAdd = {};
+      if (item.item == "Ropa") {
+        itemToAdd = {
+          item: item.item,
+          name: item.name,
+          descripcion: item.descripcion,
+          cantidad: count,
+          talla: [{talla: this.size, cantidad: this.count}],
+          url: item.url,
+          precio: item.precio,
+          id: item.id,
+        };
+      } else {
+        itemToAdd = {
+          item: item.item,
+          name: item.name,
+          descripcion: item.descripcion,
+          cantidad: count,
+          url: item.url,
+          precio: item.precio,
+          id: item.id,
+        };
       }
+      this.$store.dispatch("addItemAction", itemToAdd);
     },
   },
 };

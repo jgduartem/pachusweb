@@ -65,7 +65,7 @@ export default {
     this.getData("clothes");
   },
   methods: {
-    getUserData() {
+    async getUserData() {
       let id = this.$store.state.actualUser.uid;
       let actualUser = {};
       usersRef

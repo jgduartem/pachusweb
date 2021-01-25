@@ -13,7 +13,7 @@
       </q-card>
     </div>
     <div class="text-h4 q-my-sm" v-if="$store.state.itemPrice != 0">
-      Total: ${{$store.state.itemPrice}}
+      Total: ${{$store.state.actualUser.cartPrice}}
     </div>
   </div>
 </template>

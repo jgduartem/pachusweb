@@ -99,23 +99,25 @@ export default function (/* { ssrContext } */) {
           })
         }
       },
+      async deleteAll(state){
+        const userRef = db.ref('users/' + state.actualUser.uid)
+        state.items = [];
+        state.item = null;
+        state.itemPrice = 0;
+        state.actualUser.shoppingCart = [];
+        state.actualUser.cartPrice = 0;
+        await userRef.update({
+          shoppingCart: [],
+          cartPrice: 0,
+        })
+      },
       async deleteItem(state, itemToDelete) {
         const userRef = db.ref('users/' + state.actualUser.uid)
         let index = 0
         let priceToSubstract = 0
-        state.items.map(e => {
-          if (e.id == itemToDelete.id) {
-            index = state.items.indexOf(e);
-            priceToSubstract = e.precio
-          }
-        })
-        state.items.splice(index, 1);
-        state.itemPrice -= parseInt(priceToSubstract);
-        await userRef.update({
-          shoppingCart: [state.items],
-          cartPrice: state.itemPrice
-        })
-        console.log(state.itemPrice)
+        let exist = false
+        let repeatedItem = null
+        let repeatedIndex = null
       },
       openItem(state, item) {
         state.item = item
@@ -170,6 +172,9 @@ export default function (/* { ssrContext } */) {
       },
       cleanUserDataAction(context) {
         context.commit('cleanUserData');
+      },
+      deleteAllAction(contex) {
+        contex.commit('deleteAll')
       }
     },
     getters: {

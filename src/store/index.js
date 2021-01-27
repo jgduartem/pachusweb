@@ -117,25 +117,31 @@ export default function (/* { ssrContext } */) {
         let addItem = false
         let repeatedItem = null
         let repeatedIndex = null
+        let toAdd = 0;
+        let toSubstract = 0;
         if(item.item == 'Ropa'){
           state.items.map((i, index) => {
             if(i.id == item.id && i.talla[0].talla == item.talla[0].talla){
               if(item.talla[0].cantidad > i.talla[0].cantidad){
                 addItem = true;
-                repeatedItem = i
-                repeatedIndex = index
               }
+              repeatedItem = i
+              repeatedIndex = index
             }
           })
           if(addItem == true){
             console.log('entro')
-            state.itemPrice += parseInt(item.precio*item.talla[0].cantidad)
+            toAdd = parseInt(item.talla[0].cantidad) - parseInt(repeatedItem.talla[0].cantidad)
+            state.itemPrice += parseInt(item.precio*toAdd)
             state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
             console.log(state.items)
           }
           else{
             console.log('no entro')
-            state.itemPrice -= parseInt(item.precio*item.talla[0].cantidad)
+            toSubstract = parseInt(repeatedItem.talla[0].cantidad) - parseInt(item.talla[0].cantidad)
+            console.log('to substract', toSubstract)
+            state.itemPrice -= parseInt(item.precio*toSubstract)
+            state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
           }
           userRef.update({
             shoppingCart: state.items,

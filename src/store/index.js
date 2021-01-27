@@ -41,32 +41,124 @@ export default function (/* { ssrContext } */) {
         let repeatedIndex = null
         state.item = itemToAdd
         if (state.items.length > 0) {
+          if (state.item.item == 'Ropa') {
+            state.items.map((i, index) => {
+              if (i.id == state.item.id && i.talla[0].talla == state.item.talla[0].talla) {
+                exist = true;
+                repeatedItem = i;
+                repeatedIndex = index;
+              }
+            })
+            if (exist == true) {
+              state.items[repeatedIndex].talla[0].cantidad += state.item.talla[0].cantidad
+              state.itemPrice += parseInt(state.item.precio * state.item.talla[0].cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
+            } else {
+              state.items.push(state.item)
+              state.itemPrice += parseInt(state.item.precio * state.item.talla[0].cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
+            }
+            console.log(state.items)
+          } else {
+            state.items.map((i, index) => {
+              if (i.id == state.item.id) {
+                exist = true;
+                repeatedIndex = index;
+              }
+            })
+            if (exist == true) {
+              state.items[repeatedIndex].cantidad += state.item.cantidad;
+              state.itemPrice += parseInt(state.item.precio * state.item.cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
+            } else {
+              state.items.push(state.item)
+              state.itemPrice += parseInt(state.item.precio * state.item.cantidad)
+              await userRef.update({
+                shoppingCart: state.items,
+                cartPrice: state.itemPrice
+              })
+            }
+          }
+        } else {
+          state.items.push(state.item)
+          state.itemPrice += parseInt(state.item.precio * state.item.cantidad)
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
+        }
+      },
+      async deleteAll(state) {
+        const userRef = db.ref('users/' + state.actualUser.uid)
+        state.items = [];
+        state.item = null;
+        state.itemPrice = 0;
+        state.actualUser.shoppingCart = [];
+        state.actualUser.cartPrice = 0;
+        await userRef.update({
+          shoppingCart: [],
+          cartPrice: 0,
+        })
+      },
+      async modifyQuantity(state, item) {
+        const userRef = db.ref('users/' + state.actualUser.uid)
+        let addItem = false
+        let repeatedItem = null
+        let repeatedIndex = null
+        let toAdd = 0;
+        let toSubstract = 0;
+        if (item.item == 'Ropa') {
           state.items.map((i, index) => {
-            if (i.id == state.item.id) {
-              exist = true
-              repeatedItem = i.id
+            if (i.id == item.id && i.talla[0].talla == item.talla[0].talla) {
+              if (item.talla[0].cantidad > i.talla[0].cantidad) {
+                addItem = true;
+              }
+              repeatedItem = i
               repeatedIndex = index
             }
           })
-          if (exist == true) {
-            console.log('repetido', repeatedItem, repeatedIndex)
-            state.items[repeatedIndex].cantidad += 1;
-            state.itemPrice += parseInt(itemToAdd.precio);
-            await userRef.update({
-              shoppingCart: state.items,
-              cartPrice: state.itemPrice
-            })
-          } else {
-            state.items = [state.item, ...state.items]
-            state.itemPrice += parseInt(itemToAdd.precio);
-            await userRef.update({
-              shoppingCart: state.items,
-              cartPrice: state.itemPrice
-            })
+          if (addItem == true) {
+            toAdd = parseInt(item.talla[0].cantidad) - parseInt(repeatedItem.talla[0].cantidad)
+            state.itemPrice += parseInt(item.precio * toAdd)
+            state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
           }
+          else {
+            toSubstract = parseInt(repeatedItem.talla[0].cantidad) - parseInt(item.talla[0].cantidad)
+            state.itemPrice -= parseInt(item.precio * toSubstract)
+            state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
+          }
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
         } else {
-          state.items = [state.item, ...state.items]
-          state.itemPrice += parseInt(itemToAdd.precio);
+          state.items.map((i, index) => {
+            if (i.id == item.id) {
+              if (item.cantidad >= i.cantidad) {
+                addItem = true;
+              }
+              repeatedItem = i;
+              repeatedIndex = index;
+            }
+          })
+          if (addItem == true) {
+            toAdd = parseInt(item.cantidad) - parseInt(repeatedItem.cantidad)
+            state.itemPrice += parseInt(item.precio * toAdd);
+            state.items[repeatedIndex].cantidad = item.cantidad
+          } else {
+            toSubstract = parseInt(repeatedItem.cantidad) - parseInt(item.cantidad)
+            state.itemPrice -= parseInt(item.precio * toSubstract);
+            state.items[repeatedIndex].cantidad = item.cantidad;
+          }
           await userRef.update({
             shoppingCart: state.items,
             cartPrice: state.itemPrice
@@ -75,21 +167,29 @@ export default function (/* { ssrContext } */) {
       },
       async deleteItem(state, itemToDelete) {
         const userRef = db.ref('users/' + state.actualUser.uid)
-        let index = 0
-        let priceToSubstract = 0
-        state.items.map(e => {
-          if (e.id == itemToDelete.id) {
-            index = state.items.indexOf(e);
-            priceToSubstract = e.precio
-          }
-        })
-        state.items.splice(index, 1);
-        state.itemPrice -= parseInt(priceToSubstract);
-        await userRef.update({
-          shoppingCart: [state.items],
-          cartPrice: state.itemPrice
-        })
-        console.log(state.itemPrice)
+        if (itemToDelete.item == 'Ropa') {
+          state.items.map((i, index) => {
+            if (itemToDelete.id == i.id && itemToDelete.talla[0].talla == i.talla[0].talla) {
+              state.itemPrice -= parseInt(state.items[index].talla[0].cantidad) * parseInt(state.items[index].precio)
+              state.items.splice(index, 1);
+            }
+          })
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
+        } else {
+          state.items.map((i, index) => {
+            if (i.id == itemToDelete.id) {
+              state.itemPrice -= parseInt(state.items[index].precio) * parseInt(state.items[index].cantidad)
+              state.items.splice(index, 1);
+            }
+          })
+          await userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
+        }
       },
       openItem(state, item) {
         state.item = item
@@ -103,9 +203,11 @@ export default function (/* { ssrContext } */) {
         state.actualUser.email = user.email;
         if (user.shoppingCart) {
           state.items = user.shoppingCart;
+          state.actualUser.shoppingCart = user.shoppingCart;
         }
         if (user.itemPrice) {
           state.itemPrice = user.itemPrice;
+          state.actualUser.cartPrice = user.itemPrice;
         }
         console.log(state.actualUser)
       },
@@ -139,8 +241,14 @@ export default function (/* { ssrContext } */) {
       getUserDataAction(context, user) {
         context.commit('getUserData', user);
       },
-      cleanUserDataAction(context){
+      cleanUserDataAction(context) {
         context.commit('cleanUserData');
+      },
+      deleteAllAction(contex) {
+        contex.commit('deleteAll')
+      },
+      modifyQuantityAction(contex, item) {
+        contex.commit('modifyQuantity', item)
       }
     },
     getters: {

@@ -17,7 +17,7 @@
               text-color="white"
               class="pachuAzul absolute"
               style="top: 0; right: 12px; transform: translateY(-50%)"
-              :disable="enableShop == false"
+              disable
             />
             <div class="row no-wrap items-center">
               <div class="col text-h6 ellipsis">
@@ -74,19 +74,35 @@ export default {
     });
   },
   methods: {
-    addItem(item) {
-      let itemToAdd = {
-        name: item.name,
-        color: item.color,
-        descripcion: item.descripcion,
-        cantidad: 1,
-        url: item.url,
-        id: item.id,
-        precio: item.precio,
-        item: item.item
-      }
+    async getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
+    },
+    async addItem(item) {
+      let itemToAdd = {};
+        itemToAdd = {
+          item: item.item,
+          name: item.name,
+          descripcion: item.descripcion,
+          cantidad: count,
+          url: item.url,
+          precio: item.precio,
+          id: item.id,
+        };
       this.$store.dispatch("addItemAction", itemToAdd);
-      console.log(this.$store.state.items);
+      await this.getUserData()
     },
     openItem(item) {
       this.$store.dispatch("openItemAction", item);

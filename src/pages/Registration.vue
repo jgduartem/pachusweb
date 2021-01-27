@@ -38,7 +38,7 @@
             <q-input
               class="q-ma-sm"
               :type="isPwd2 ? 'password' : 'text'"
-              label="Contraseña"
+              label="Repetir Contraseña"
               v-model="passConfirm"
             >
               <template v-slot:append>

@@ -95,4 +95,7 @@ export default {
 .pachuRosa{
   background-color: #F64965;
 }
+.pachuAzul {
+  background-color: #33cdd1;
+}
 </style>

@@ -42,7 +42,7 @@
               icon="shopping_cart"
               label="Agregar al carrito"
               @click="addItem(itemToShow, count)"
-              :disable="enableShop == false || count == 0"
+              :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
             />
           </div>
         </q-card-section>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { auth } from "src/firebase/firebaseConfig";
+import { auth, usersRef } from "src/firebase/firebaseConfig";
 import router from "src/router";
 export default {
   name: "ProductView",
@@ -106,16 +106,54 @@ export default {
     }
   },
   methods: {
+    async getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
+    },
     setOptions() {
       this.itemToShow.talla.forEach((item) => {
         this.options.push(item.talla);
       });
     },
-    addItem(item, count) {
-      console.log(count);
-      for (let i = 0; i < count; i++) {
-        this.$store.dispatch("addItemAction", item);
+    async addItem(item, count) {
+      let itemToAdd = {};
+      if (item.item == "Ropa") {
+        itemToAdd = {
+          item: item.item,
+          name: item.name,
+          color: item.color,
+          descripcion: item.descripcion,
+          cantidad: this.count,
+          talla: [{talla: this.size, cantidad: this.count}],
+          url: item.url,
+          precio: item.precio,
+          id: item.id,
+        };
+      } else {
+        itemToAdd = {
+          item: item.item,
+          name: item.name,
+          descripcion: item.descripcion,
+          cantidad: count,
+          url: item.url,
+          precio: item.precio,
+          id: item.id,
+        };
       }
+      this.$store.dispatch("addItemAction", itemToAdd);
+      await this.getUserData()
     },
   },
 };

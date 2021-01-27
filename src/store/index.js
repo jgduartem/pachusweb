@@ -111,6 +111,39 @@ export default function (/* { ssrContext } */) {
           cartPrice: 0,
         })
       },
+      async modifyQuantity(state, item){
+        console.log(item)
+        const userRef = db.ref('users/' + state.actualUser.uid )
+        let addItem = false
+        let repeatedItem = null
+        let repeatedIndex = null
+        if(item.item == 'Ropa'){
+          state.items.map((i, index) => {
+            if(i.id == item.id && i.talla[0].talla == item.talla[0].talla){
+              if(item.talla[0].cantidad > i.talla[0].cantidad){
+                addItem = true;
+                repeatedItem = i
+                repeatedIndex = index
+              }
+            }
+          })
+          if(addItem == true){
+            console.log('entro')
+            state.itemPrice += parseInt(item.precio*item.talla[0].cantidad)
+            state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
+            console.log(state.items)
+          }
+          else{
+            console.log('no entro')
+            state.itemPrice -= parseInt(item.precio*item.talla[0].cantidad)
+          }
+          userRef.update({
+            shoppingCart: state.items,
+            cartPrice: state.itemPrice
+          })
+          console.log(state.items)
+        }
+      },
       async deleteItem(state, itemToDelete) {
         const userRef = db.ref('users/' + state.actualUser.uid)
         let index = 0
@@ -175,6 +208,9 @@ export default function (/* { ssrContext } */) {
       },
       deleteAllAction(contex) {
         contex.commit('deleteAll')
+      },
+      modifyQuantityAction(contex, item){
+        contex.commit('modifyQuantity', item)
       }
     },
     getters: {

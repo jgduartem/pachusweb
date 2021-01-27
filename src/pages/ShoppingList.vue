@@ -6,7 +6,7 @@
     <div class="row col-12">
       <q-btn class="q-ma-sm pachuAzul" text-color="white" icon="shopping_cart" label="Ir Al carrito" to="/Checkout" />
       <q-btn class="q-ma-sm pachuRosa" text-color="white" icon="remove_shopping_cart" label="Vaciar Carrito" @click="warning=true" />
-      <q-btn class="q-ma-sm pachuAzul" text-color="white "icon="check" label="Comprar" @click="onClick" />
+      <q-btn class="q-ma-sm pachuAzul" text-color="white "icon="check" label="Comprar"  />
     </div>
     <q-dialog v-model="warning" persistent>
       <q-card>

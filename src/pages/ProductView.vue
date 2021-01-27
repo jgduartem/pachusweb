@@ -127,7 +127,7 @@ export default {
         this.options.push(item.talla);
       });
     },
-    addItem(item, count) {
+    async addItem(item, count) {
       let itemToAdd = {};
       if (item.item == "Ropa") {
         itemToAdd = {
@@ -153,7 +153,7 @@ export default {
         };
       }
       this.$store.dispatch("addItemAction", itemToAdd);
-      this.getUserData()
+      await this.getUserData()
     },
   },
 };

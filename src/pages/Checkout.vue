@@ -43,19 +43,18 @@
             class="q-ml-md"
             icon-right="delete"
             label="Eliminar"
-            @click="deleteItem(i, i.talla[0].cantidad)"
+            @click="deleteItem(i)"
           />
         </q-card-actions>
 
         <q-card-actions v-if="i.item != 'Ropa'">
-          <q-btn flat round icon="add_circle" @click="count++" />
-          <q-input
-            input-class="text-center"
-            :value="i.cantidad"
-            type="text"
-            label="Cantidad"
+          <q-btn label="Modificar Cantidad" @click="openModify(i)" />
+          <q-btn
+            class="q-ml-md"
+            icon-right="delete"
+            label="Eliminar"
+            @click="deleteItem(i)"
           />
-          <q-btn flat round icon="remove_circle" @click="count--" />
         </q-card-actions>
       </q-card>
     </div>
@@ -66,11 +65,24 @@
           <span class="q-ml-sm">Introduce la cantidad deseada</span>
         </q-card-section>
         <q-card-section>
-          <q-input :rules="[count => count >=1 ]" input-class="text-center" v-model="count" type="number" label="Cantidad" />
+          <q-input
+            :rules="[(count) => count >= 1]"
+            input-class="text-center"
+            v-model="count"
+            type="number"
+            label="Cantidad"
+          />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn flat label="Cancelar" v-close-popup />
-          <q-btn flat label="Aceptar" :disable='count < 1' color="primary" v-close-popup @click="modifyQuantity()" />
+          <q-btn
+            flat
+            label="Aceptar"
+            :disable="count < 1"
+            color="primary"
+            v-close-popup
+            @click="modifyQuantity()"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -78,6 +90,7 @@
 </template>
 
 <script>
+import { usersRef, auth } from "src/firebase/firebaseConfig";
 export default {
   name: "Checkout",
   props: {},
@@ -85,15 +98,41 @@ export default {
     return {
       count: 1,
       openModal: false,
-      itemSaved: {}
+      itemSaved: {},
     };
   },
+  async created() {
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        await this.$store.dispatch("getUserIdAction", user.uid);
+        await this.getUserData();
+      }else{
+        this.$router.push('/')
+      }
+    });
+  },
   methods: {
-    openModify(item){
-      this.openModal = true,
-      this.itemSaved = item
+    async getUserData() {
+      let id = this.$store.state.actualUser.uid;
+      let actualUser = {};
+      usersRef
+        .orderByKey()
+        .equalTo(id)
+        .once("value")
+        .then(async (snapshot) => {
+          actualUser.name = await snapshot.val()[id].name;
+          actualUser.email = await snapshot.val()[id].email;
+          actualUser.phone = await snapshot.val()[id].phone;
+          actualUser.shoppingCart = await snapshot.val()[id].shoppingCart;
+          actualUser.itemPrice = await snapshot.val()[id].cartPrice;
+          await this.$store.dispatch("getUserDataAction", actualUser);
+        });
     },
-    modifyQuantity() {
+    openModify(item) {
+      this.openModal = true;
+      this.itemSaved = item;
+    },
+    async modifyQuantity() {
       let itemToModify = {};
       if (this.itemSaved.item == "Ropa") {
         itemToModify = {
@@ -102,7 +141,9 @@ export default {
           color: this.itemSaved.color,
           descripcion: this.itemSaved.descripcion,
           cantidad: this.count,
-          talla: [{ talla: this.itemSaved.talla[0].talla, cantidad: this.count }],
+          talla: [
+            { talla: this.itemSaved.talla[0].talla, cantidad: this.count },
+          ],
           url: this.itemSaved.url,
           precio: this.itemSaved.precio,
           id: this.itemSaved.id,
@@ -120,8 +161,9 @@ export default {
       }
       this.$store.dispatch("modifyQuantityAction", itemToModify);
       this.count = 1;
+      await this.getUserData();
     },
-    deleteItem(item, quantity) {
+    async deleteItem(item) {
       let itemToDelete = {};
       if (item.item == "Ropa") {
         itemToDelete = {
@@ -129,8 +171,10 @@ export default {
           name: item.name,
           color: item.color,
           descripcion: item.descripcion,
-          cantidad: quantity,
-          talla: [{ talla: this.size, cantidad: quantity }],
+          cantidad: item.cantidad,
+          talla: [
+            { talla: item.talla[0].talla, cantidad: item.talla[0].cantidad },
+          ],
           url: item.url,
           precio: item.precio,
           id: item.id,
@@ -147,6 +191,7 @@ export default {
         };
       }
       this.$store.dispatch("deleteItemAction", itemToDelete);
+      await this.getUserData();
     },
   },
 };

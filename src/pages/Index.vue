@@ -54,7 +54,6 @@ export default {
   created() {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
-        console.log(user);
         await this.$store.dispatch("getUserIdAction", user.uid);
         await this.getUserData()
         this.session = true;
@@ -101,7 +100,6 @@ export default {
       }
     },
     async getData(option) {
-      console.log(option);
       let datos = [];
       switch (option) {
         case "clothes":
@@ -183,7 +181,6 @@ export default {
           });
           this.data = await datos;
           this.active = true;
-          console.log(this.data);
           break;
       }
     },

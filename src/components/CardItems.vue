@@ -104,6 +104,13 @@ export default {
         id: item.id,
       };
       await this.$store.dispatch("addItemAction", itemToAdd);
+      this.$q.notify({
+        message: itemToAdd.name + ' agregado al carrito',
+        timeout: 1000,
+        color: 'info',
+        textColor: 'white',
+        position: 'bottom'
+      })
       await this.getUserData();
     },
     openItem(item) {

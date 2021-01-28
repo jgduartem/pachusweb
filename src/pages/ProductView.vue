@@ -152,6 +152,13 @@ export default {
           id: item.id,
         };
       }
+      this.$q.notify({
+        message: itemToAdd.name + ' agregado al carrito',
+        timeout: 1000,
+        color: 'info',
+        textColor: 'white',
+        position: 'bottom'
+      })
       this.$store.dispatch("addItemAction", itemToAdd);
       await this.getUserData()
     },

@@ -61,7 +61,7 @@
     <q-dialog v-model="openModal" persistent>
       <q-card>
         <q-card-section class="row items-center">
-          <q-avatar icon="signal_wifi_off" color="primary" text-color="white" />
+          <q-avatar icon="warning" color="primary" text-color="white" />
           <span class="q-ml-sm">Introduce la cantidad deseada</span>
         </q-card-section>
         <q-card-section>
@@ -184,7 +184,7 @@ export default {
           item: item.item,
           name: item.name,
           descripcion: item.descripcion,
-          cantidad: quantity,
+          cantidad: item.cantidad,
           url: item.url,
           precio: item.precio,
           id: item.id,

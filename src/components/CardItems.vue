@@ -13,12 +13,15 @@
             <q-btn
               fab
               icon="shopping_cart"
-              @click="addItem(item)"
+              @click="item.item == 'Ropa' ? openItem(item) : addItem(item)"
+              :to="item.item == 'Ropa' ? '/View' : null"
               text-color="white"
               class="pachuAzul absolute"
               style="top: 0; right: 12px; transform: translateY(-50%)"
-              disable
-            />
+              :disable="enableShop == false"
+            >
+              <q-tooltip v-if="item.item != 'Ropa'"> Agregar al carrito sin personalizar </q-tooltip>
+            </q-btn>
             <div class="row no-wrap items-center">
               <div class="col text-h6 ellipsis">
                 {{ item.name }}
@@ -52,8 +55,7 @@
 </template>
 
 <script>
-import { auth, db } from "src/firebase/firebaseConfig";
-import ProductView from "src/pages/ProductView";
+import { auth, usersRef } from "src/firebase/firebaseConfig";
 export default {
   name: "CardItems",
   props: {
@@ -92,17 +94,17 @@ export default {
     },
     async addItem(item) {
       let itemToAdd = {};
-        itemToAdd = {
-          item: item.item,
-          name: item.name,
-          descripcion: item.descripcion,
-          cantidad: count,
-          url: item.url,
-          precio: item.precio,
-          id: item.id,
-        };
-      this.$store.dispatch("addItemAction", itemToAdd);
-      await this.getUserData()
+      itemToAdd = {
+        item: item.item,
+        name: item.name,
+        descripcion: item.descripcion,
+        cantidad: 1,
+        url: item.url,
+        precio: item.precio,
+        id: item.id,
+      };
+      await this.$store.dispatch("addItemAction", itemToAdd);
+      await this.getUserData();
     },
     openItem(item) {
       this.$store.dispatch("openItemAction", item);

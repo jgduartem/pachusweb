@@ -163,11 +163,13 @@
             </q-file>
             <div class="row col-12 justify-end">
               <q-btn
+                class="q-ma-sm"
                 label="Guardar Imagen"
                 @click="uploadImage()"
                 :disabled="image == null"
               />
               <q-btn
+                class="q-ma-sm"
                 label="Guardar"
                 @click="addItem(newItem, category)"
                 :disabled="saveButton == false"
@@ -298,7 +300,7 @@ export default {
         imgName: "",
       },
       options: ["Ropa", "Gorra", "Taza", "Otro"],
-      category: '',
+      category: "",
       columns: [
         {
           name: "select",
@@ -637,15 +639,20 @@ export default {
       imgRef
         .put(this.image, metaData)
         .then(async (data) => {
-          await console.log(data);
-          imageRef
+          console.log(data);
+          this.$q.loading.show({
+            delay: 100,
+            message: 'Cargando Imagen'
+          });
+          await imageRef
             .child("image/" + this.image.name)
             .getDownloadURL()
             .then(async (url) => {
-              await console.log(url);
+              console.log(url);
               this.newItem.url = url;
             });
           this.saveButton = true;
+          this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);

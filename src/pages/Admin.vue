@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-if="user == true">
       <q-table
         class="q-ma-md"
         title="Inventario"
@@ -163,11 +163,13 @@
             </q-file>
             <div class="row col-12 justify-end">
               <q-btn
+                class="q-ma-sm"
                 label="Guardar Imagen"
                 @click="uploadImage()"
                 :disabled="image == null"
               />
               <q-btn
+                class="q-ma-sm"
                 label="Guardar"
                 @click="addItem(newItem, category)"
                 :disabled="saveButton == false"
@@ -281,7 +283,7 @@ export default {
       image: null,
       saveButton: false,
       urlImage: "",
-      user: "",
+      user: false,
       addModal: false,
       modalEdit: false,
       selected: [],
@@ -298,7 +300,7 @@ export default {
         imgName: "",
       },
       options: ["Ropa", "Gorra", "Taza", "Otro"],
-      category: '',
+      category: "",
       columns: [
         {
           name: "select",
@@ -353,13 +355,18 @@ export default {
   },
   created() {
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.user = auth.currentUser.email;
+      if (
+        user != undefined &&
+        (user.email == "joseduarte019@gmail.com" ||
+          user.email == "Jesusmictilg@gmail.com")
+      ) {
+        this.user = true;
+        this.getData();
       } else {
-        console.log("no user");
+        this.user = false;
+        this.$router.push("/");
       }
     });
-    this.getData();
   },
   methods: {
     addSize() {
@@ -637,15 +644,20 @@ export default {
       imgRef
         .put(this.image, metaData)
         .then(async (data) => {
-          await console.log(data);
-          imageRef
+          console.log(data);
+          this.$q.loading.show({
+            delay: 100,
+            message: "Cargando Imagen",
+          });
+          await imageRef
             .child("image/" + this.image.name)
             .getDownloadURL()
             .then(async (url) => {
-              await console.log(url);
+              console.log(url);
               this.newItem.url = url;
             });
           this.saveButton = true;
+          this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);

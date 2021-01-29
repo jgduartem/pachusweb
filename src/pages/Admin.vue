@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>
+    <div v-if="user == true">
       <q-table
         class="q-ma-md"
         title="Inventario"
@@ -283,7 +283,7 @@ export default {
       image: null,
       saveButton: false,
       urlImage: "",
-      user: "",
+      user: false,
       addModal: false,
       modalEdit: false,
       selected: [],
@@ -355,13 +355,18 @@ export default {
   },
   created() {
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.user = auth.currentUser.email;
+      if (
+        user != undefined &&
+        (user.email == "joseduarte019@gmail.com" ||
+          user.email == "Jesusmictilg@gmail.com")
+      ) {
+        this.user = true;
+        this.getData();
       } else {
-        console.log("no user");
+        this.user = false;
+        this.$router.push("/");
       }
     });
-    this.getData();
   },
   methods: {
     addSize() {
@@ -642,7 +647,7 @@ export default {
           console.log(data);
           this.$q.loading.show({
             delay: 100,
-            message: 'Cargando Imagen'
+            message: "Cargando Imagen",
           });
           await imageRef
             .child("image/" + this.image.name)

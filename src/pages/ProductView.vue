@@ -38,6 +38,14 @@
           </div>
           <div class="row col-xs-12-col-12 justify-end">
             <q-btn
+              class="q-ma-sm"
+              color="primary"
+              icon="create"
+              label="Personalizar"
+              :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
+            />
+            <q-btn
+              class="q-ma-sm"
               color="primary"
               icon="shopping_cart"
               label="Agregar al carrito"

@@ -10,7 +10,7 @@
           <div>
             <q-btn class="q-ma-xs" size="md" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Registrate" to="/Register" v-if="activeUser != true" text-color="grey-3" />
-            <q-btn class="q-ma-xs" size="md" outline rounded label="Mi Cuenta" v-if="activeUser != false" text-color="grey-3" />
+            <q-btn class="q-ma-xs" size="md" outline rounded label="Mi Cuenta" v-if="activeUser != false" text-color="grey-3" to="/MyAccount" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" flat @click="drawer = !drawer" round dense icon="shopping_cart" v-if="activeUser != false" />
           </div>

@@ -358,7 +358,7 @@ export default {
       if (
         user != undefined &&
         (user.email == "joseduarte019@gmail.com" ||
-          user.email == "Jesusmictilg@gmail.com")
+          user.email == "jesusmictilg@gmail.com")
       ) {
         this.user = true;
         this.getData();

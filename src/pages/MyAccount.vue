@@ -1,9 +1,9 @@
 <template>
   <div>
-    <q-drawer v-model="drawer" show-if-above :width="200" :breakpoint="500">
+    <q-drawer v-model="drawer" show-if-above :width="150" :breakpoint="200">
       <q-scroll-area class="fit">
         <q-list padding class="menu-list">
-          <q-item clickable v-ripple>
+          <q-item clickable v-ripple @click="changeSelection('myData')">
             <q-item-section avatar>
               <q-icon name="person" />
             </q-item-section>
@@ -11,7 +11,7 @@
             <q-item-section> Mi Cuenta </q-item-section>
           </q-item>
 
-          <q-item clickable v-ripple @click="activeCheckout=true">
+          <q-item clickable v-ripple @click="changeSelection('checkout')">
             <q-item-section avatar>
               <q-icon name="shopping_cart" />
             </q-item-section>
@@ -31,24 +31,31 @@
     </q-drawer>
 
     <div class="q-pa-md">
-      <Checkout v-if="activeCheckout==true"/>
+      <Checkout v-if="activeSelection == 'checkout' "/>
+    </div>
+    <div class="q-pa-md">
+      <AccountData v-if="activeSelection == 'myData'" />
     </div>
   </div>
 </template>
 
 <script>
 import Checkout from "src/pages/Checkout.vue";
+import AccountData from "src/components/AccountData.vue"
 export default {
   name: "MyAccount",
-  components: {Checkout},
+  components: {Checkout, AccountData},
   props: {},
   data() {
     return {
       drawer: true,
-      activeCheckout: false
+      activeSelection: '',
     };
   },
   methods: {
+    changeSelection(option){
+      this.activeSelection = option;
+    }
   },
 };
 </script>

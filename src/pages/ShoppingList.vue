@@ -1,12 +1,32 @@
 <template>
   <div style="width: 200px">
     <div class="text-h4 q-my-md" v-if="$store.state.itemPrice != 0">
-      Total: ${{$store.state.actualUser.cartPrice}}
+      Total: ${{ $store.state.actualUser.cartPrice }}
     </div>
     <div class="row col-12">
-      <q-btn class="q-ma-sm pachuAzul" text-color="white" icon="shopping_cart" label="Ir Al carrito" to="/Checkout" />
-      <q-btn :disable='$store.state.items.length == 0' class="q-ma-sm pachuRosa" text-color="white" icon="remove_shopping_cart" label="Vaciar Carrito" @click="warning=true" />
-      <q-btn :disable='$store.state.items.length == 0' class="q-ma-sm pachuAzul" text-color="white" icon="check" label="Comprar"  />
+      <q-btn
+        class="q-ma-sm pachuAzul"
+        text-color="white"
+        icon="shopping_cart"
+        label="Ir Al carrito"
+        to="/Checkout"
+      />
+      <q-btn
+        :disable="$store.state.items.length == 0"
+        class="q-ma-sm pachuRosa"
+        text-color="white"
+        icon="remove_shopping_cart"
+        label="Vaciar Carrito"
+        @click="warning = true"
+      />
+      <q-btn
+        :disable="$store.state.items.length == 0"
+        class="q-ma-sm pachuAzul"
+        text-color="white"
+        icon="check"
+        label="Comprar"
+        @click="finishBuy()"
+      />
     </div>
     <q-dialog v-model="warning" persistent>
       <q-card>
@@ -15,8 +35,14 @@
           <span class="q-ml-sm">¿Quieres vaciar el carrito?</span>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="No"  v-close-popup />
-          <q-btn flat label="Si" color="primary" @click="deleteAll()" v-close-popup />
+          <q-btn flat label="No" v-close-popup />
+          <q-btn
+            flat
+            label="Si"
+            color="primary"
+            @click="deleteAll()"
+            v-close-popup
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -25,18 +51,39 @@
 
 <script>
 import { usersRef } from "src/firebase/firebaseConfig";
+import Axios from "axios";
 export default {
-    name: 'ShoppingList',
-    data(){
-      return{
-        warning: false
-      }
+  name: "ShoppingList",
+  data() {
+    return {
+      warning: false,
+    };
+  },
+  created() {
+    this.getUserData();
+  },
+  methods: {
+    finishBuy() {
+      Axios({
+        method: "post",
+        url: "https://pachumailer.herokuapp.com/api",
+        data: {
+          to: this.$store.state.actualUser.email,
+          subject: "Tu compra en Pachus",
+          message: "mensaje de prueba",
+        },
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
-    created(){
-      this.getUserData()
-    },
-    methods:{
-      async getUserData() {
+    async getUserData() {
       let id = this.$store.state.actualUser.uid;
       let actualUser = {};
       usersRef
@@ -52,14 +99,13 @@ export default {
           await this.$store.dispatch("getUserDataAction", actualUser);
         });
     },
-      async deleteAll(){
-        await this.$store.dispatch('deleteAllAction')
-        this.getUserData();
-      }
+    async deleteAll() {
+      await this.$store.dispatch("deleteAllAction");
+      this.getUserData();
     },
-}
+  },
+};
 </script>
 
 <style>
-
 </style>

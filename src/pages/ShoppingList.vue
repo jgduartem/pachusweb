@@ -25,7 +25,7 @@
         text-color="white"
         icon="check"
         label="Comprar"
-        @click="finishBuy()"
+        to="/MyAccount"
       />
     </div>
     <q-dialog v-model="warning" persistent>
@@ -71,6 +71,7 @@ export default {
           to: this.$store.state.actualUser.email,
           subject: "Tu compra en Pachus",
           message: "mensaje de prueba",
+          html: "<h4>Gracias por comprar en Pachu's</h4></br></br> <p></p>"
         },
         headers: {
           "Content-Type": "application/json",
@@ -78,6 +79,14 @@ export default {
       })
         .then((res) => {
           console.log(res);
+          this.$q.notify({
+            message: "¡Gracias por tu compra! Recibiras un email con los detalles",
+            timeout: 2000,
+            color: "info",
+            textColor: "white",
+            position: "bottom",
+          });
+          this.deleteAll();
         })
         .catch((err) => {
           console.log(err);

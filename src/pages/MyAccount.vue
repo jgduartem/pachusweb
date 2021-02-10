@@ -30,31 +30,44 @@
       </q-scroll-area>
     </q-drawer>
 
-    <div class="q-pa-md">
-      <Checkout v-if="activeSelection == 'checkout' "/>
+    <div class="q-pa-md" v-if="activeSelection == 'checkout'">
+      <Checkout />
+      <div class="q-pa-md q-ma-md row col-12 justify-center">
+        <q-btn color="info" icon="check" label="Finalizar compra" @click="openBuyModal()"/>
+      </div>
     </div>
-    <div class="q-pa-md">
-      <AccountData v-if="activeSelection == 'myData'" />
+    <div class="q-pa-md" v-if="activeSelection == 'myData'">
+      <AccountData />
+    </div>
+    <div class="q-pa-md" v-if="openModal == true">
+      <q-dialog v-model="openModal" persistent>
+        <BuyModal />
+      </q-dialog>
     </div>
   </div>
 </template>
 
 <script>
 import Checkout from "src/pages/Checkout.vue";
-import AccountData from "src/components/AccountData.vue"
+import AccountData from "src/components/AccountData.vue";
+import BuyModal from "src/components/BuyModal";
 export default {
   name: "MyAccount",
-  components: {Checkout, AccountData},
+  components: { Checkout, AccountData, BuyModal },
   props: {},
   data() {
     return {
       drawer: true,
-      activeSelection: '',
+      activeSelection: "checkout",
+      openModal: false,
     };
   },
   methods: {
-    changeSelection(option){
+    changeSelection(option) {
       this.activeSelection = option;
+    },
+    openBuyModal(){
+      this.openModal = true
     }
   },
 };

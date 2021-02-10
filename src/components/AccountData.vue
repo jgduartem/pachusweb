@@ -7,9 +7,7 @@
             </br>
             </br>
             <div class="text-subtitle2">
-              Desde el escritorio de tu cuenta puedes ver tus pedidos recientes, 
-              gestionar tus direcciones de envío y facturación y editar tu contraseña y 
-              los detalles de tu cuenta.
+              Desde el escritorio de tu cuenta puedes ver tu carrito y editar tu contraseña
             </div>
           </div>
         </q-card-section>

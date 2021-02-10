@@ -130,11 +130,13 @@ export default function (/* { ssrContext } */) {
             toAdd = parseInt(item.talla[0].cantidad) - parseInt(repeatedItem.talla[0].cantidad)
             state.itemPrice += parseInt(item.precio * toAdd)
             state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
+            state.items[repeatedIndex].cantidad = item.talla[0].cantidad
           }
           else {
             toSubstract = parseInt(repeatedItem.talla[0].cantidad) - parseInt(item.talla[0].cantidad)
             state.itemPrice -= parseInt(item.precio * toSubstract)
             state.items[repeatedIndex].talla[0].cantidad = item.talla[0].cantidad
+            state.items[repeatedIndex].cantidad = item.talla[0].cantidad
           }
           await userRef.update({
             shoppingCart: state.items,

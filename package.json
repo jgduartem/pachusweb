@@ -16,6 +16,7 @@
     "core-js": "^3.6.5",
     "firebase": "^8.2.1",
     "quasar": "^1.0.0",
+    "quasar-dotenv": "^1.0.5",
     "vuefire": "^2.2.5",
     "vuex-persist": "^3.1.3"
   },

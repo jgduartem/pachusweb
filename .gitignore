@@ -2,6 +2,7 @@
 .thumbs.db
 node_modules
 /src/firebase/firebaseConfig.js
+quasar.conf.js
 
 # Quasar core related directories
 .quasar

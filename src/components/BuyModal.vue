@@ -28,6 +28,7 @@
           :options="options"
           label="Tipo de pago"
         />
+        <q-input v-if="model != null" v-model="reference" type="text" label="Numero de referencia" />
         <q-field label="Precio en Bs" stack-label>
         <template v-slot:control>
           <div class="self-center full-width no-outline" tabindex="0">{{totalBs}}</div>
@@ -35,8 +36,8 @@
       </q-field>
       </q-card-section>
       <q-card-actions align="right">
-        <q-btn flat label="Cancel" color="primary" v-close-popup />
-        <q-btn flat label="Turn on Wifi" color="primary" v-close-popup />
+        <q-btn flat label="Cancelar" color="primary" v-close-popup />
+        <q-btn flat label="Finalizar Compra" color="primary" v-close-popup :disable="reference == ''" @click="finishBuy()" />
       </q-card-actions>
     </q-card>
   </div>
@@ -52,10 +53,14 @@ export default {
       model: null,
       options: ["Pago Movil", "Transferencia", "Zelle"],
       dolarPrice: "",
-      totalBs: 0
+      totalBs: 0,
+      reference: ''
     };
   },
   methods: {
+    finishBuy(){
+      this.$emit('finishBuy', this.reference)
+    },
     getDolarPrice() {
       console.log('entro')
       Axios({

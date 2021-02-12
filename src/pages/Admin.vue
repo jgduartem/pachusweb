@@ -357,8 +357,8 @@ export default {
     auth.onAuthStateChanged((user) => {
       if (
         user != undefined &&
-        (user.email == "joseduarte019@gmail.com" ||
-          user.email == "jesusmictilg@gmail.com")
+        (user.email == process.env.ADMIN_USER1 ||
+          user.email == process.env.ADMIN_USER2)
       ) {
         this.user = true;
         this.getData();

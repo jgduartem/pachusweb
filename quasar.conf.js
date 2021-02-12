@@ -42,6 +42,12 @@ module.exports = function (/* ctx */) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-build
     build: {
+      env: {
+        MAILER_URL:'https://pachumailer.herokuapp.com/api',
+        ADMIN_USER1: 'joseduarte019@gmail.com',
+        ADMIN_USER2: 'jesusmictilg@gmail.com'
+
+      },
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
       // transpile: false,

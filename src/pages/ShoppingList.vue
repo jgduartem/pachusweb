@@ -63,35 +63,6 @@ export default {
     this.getUserData();
   },
   methods: {
-    finishBuy() {
-      Axios({
-        method: "post",
-        url: "https://pachumailer.herokuapp.com/api",
-        data: {
-          to: this.$store.state.actualUser.email,
-          subject: "Tu compra en Pachus",
-          message: "mensaje de prueba",
-          html: "<h4>Gracias por comprar en Pachu's</h4></br></br> <p></p>"
-        },
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          console.log(res);
-          this.$q.notify({
-            message: "¡Gracias por tu compra! Recibiras un email con los detalles",
-            timeout: 2000,
-            color: "info",
-            textColor: "white",
-            position: "bottom",
-          });
-          this.deleteAll();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
     async getUserData() {
       let id = this.$store.state.actualUser.uid;
       let actualUser = {};
@@ -107,10 +78,6 @@ export default {
           actualUser.itemPrice = await snapshot.val()[id].cartPrice;
           await this.$store.dispatch("getUserDataAction", actualUser);
         });
-    },
-    async deleteAll() {
-      await this.$store.dispatch("deleteAllAction");
-      this.getUserData();
     },
   },
 };

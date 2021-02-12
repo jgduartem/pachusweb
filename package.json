@@ -21,7 +21,8 @@
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
-    "@quasar/quasar-app-extension-dotenv": "^1.0.6"
+    "@quasar/quasar-app-extension-dotenv": "^1.0.6",
+    "workbox-webpack-plugin": "^5.1.4"
   },
   "browserslist": [
     "last 10 Chrome versions",

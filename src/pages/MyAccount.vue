@@ -33,7 +33,13 @@
     <div class="q-pa-md" v-if="activeSelection == 'checkout'">
       <Checkout />
       <div class="q-pa-md q-ma-md row col-12 justify-center">
-        <q-btn color="info" icon="check" label="Finalizar compra" @click="openBuyModal()" v-if="$store.state.actualUser.shoppingCart.length > 0"/>
+        <q-btn
+          color="info"
+          icon="check"
+          label="Finalizar compra"
+          @click="openBuyModal()"
+          v-if="$store.state.actualUser.shoppingCart.length > 0"
+        />
       </div>
     </div>
     <div class="q-pa-md" v-if="activeSelection == 'myData'">
@@ -41,7 +47,7 @@
     </div>
     <div class="q-pa-md" v-if="openModal == true">
       <q-dialog v-model="openModal" persistent>
-        <BuyModal @finishBuy='finishBuy' />
+        <BuyModal @finishBuy="finishBuy" />
       </q-dialog>
     </div>
   </div>
@@ -51,8 +57,8 @@
 import Checkout from "src/pages/Checkout.vue";
 import AccountData from "src/components/AccountData.vue";
 import BuyModal from "src/components/BuyModal";
-import Axios from 'axios';
-import {usersRef} from 'src/firebase/firebaseConfig'
+import Axios from "axios";
+import { auth, usersRef } from "src/firebase/firebaseConfig";
 export default {
   name: "MyAccount",
   components: { Checkout, AccountData, BuyModal },
@@ -81,7 +87,8 @@ export default {
           await this.$store.dispatch("getUserDataAction", actualUser);
         });
     },
-    finishBuy(referencia) {
+    async finishBuy(referencia) {
+      let user = auth.currentUser;
       Axios({
         method: "post",
         url: process.env.MAILER_URL,
@@ -94,19 +101,31 @@ export default {
           "Content-Type": "application/json",
         },
       })
-        .then((res) => {
+        .then(async (res) => {
           console.log(res);
           this.$q.notify({
-            message: "¡Gracias por tu compra! Recibiras un email con los detalles",
+            message:
+              "¡Gracias por tu compra! Recibiras un email con los detalles",
             timeout: 2000,
             color: "info",
             textColor: "white",
             position: "bottom",
           });
+          await usersRef.child(user.uid).update({
+            finishedBuys: [...this.$store.state.actualUser.shoppingCart],
+          });
+          await this.sendMailToPachus()
           this.deleteAll();
         })
         .catch((err) => {
           console.log(err);
+          this.$q.notify({
+            message: "Error del servidor, intenta nuevamente",
+            timeout: 2000,
+            color: "info",
+            textColor: "white",
+            position: "bottom",
+          });
         });
     },
     async deleteAll() {
@@ -116,9 +135,48 @@ export default {
     changeSelection(option) {
       this.activeSelection = option;
     },
-    openBuyModal(){
-      this.openModal = true
-    }
+    openBuyModal() {
+      this.openModal = true;
+    },
+    async test(){
+      let user = auth.currentUser
+      let infoToSend = await usersRef
+        .child(user.uid)
+        .once("value")
+        .then((snapshot) => {
+          return snapshot.val().finishedBuys[0];
+        });
+        console.log(infoToSend.cantidad, infoToSend.name, infoToSend.color)
+    },
+    async sendMailToPachus() {
+      let user = auth.currentUser;
+      let infoToSend = [];
+      let order = await usersRef.child(user.uid).once('value').then((snapshot) => {
+        return snapshot.val().finishedBuys
+      })
+      console.log(order)
+      order.forEach(e => {
+        infoToSend.push(`<h6> ${e.cantidad} ${e.name} ${e.color} </h6>`)
+      })
+      Axios({
+        method: "post",
+        url: process.env.MAILER_URL,
+        data: {
+          to: process.env.ADMIN_USER1,
+          subject: "Compra del cliente: " + user.displayName,
+          message: infoToSend.toString()
+        },
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    },
   },
 };
 </script>

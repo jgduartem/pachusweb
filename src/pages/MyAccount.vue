@@ -131,6 +131,7 @@ export default {
             textColor: "white",
             position: "bottom",
           });
+          this.$q.loading.hide();
         });
     },
     async deleteAll() {

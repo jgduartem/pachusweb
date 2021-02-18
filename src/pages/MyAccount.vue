@@ -89,6 +89,10 @@ export default {
     },
     async finishBuy(referencia) {
       let user = auth.currentUser;
+      this.$q.loading.show({
+        delay: 100,
+        message: "Cargando",
+      });
       Axios({
         method: "post",
         url: process.env.MAILER_URL,
@@ -114,8 +118,9 @@ export default {
           await usersRef.child(user.uid).update({
             finishedBuys: [...this.$store.state.actualUser.shoppingCart],
           });
-          await this.sendMailToPachus()
+          await this.sendMailToPachus();
           this.deleteAll();
+          this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);
@@ -138,44 +143,47 @@ export default {
     openBuyModal() {
       this.openModal = true;
     },
-    async test(){
-      let user = auth.currentUser
+    async test() {
+      let user = auth.currentUser;
       let infoToSend = await usersRef
         .child(user.uid)
         .once("value")
         .then((snapshot) => {
           return snapshot.val().finishedBuys[0];
         });
-        console.log(infoToSend.cantidad, infoToSend.name, infoToSend.color)
+      console.log(infoToSend.cantidad, infoToSend.name, infoToSend.color);
     },
     async sendMailToPachus() {
       let user = auth.currentUser;
       let infoToSend = [];
-      let order = await usersRef.child(user.uid).once('value').then((snapshot) => {
-        return snapshot.val().finishedBuys
-      })
-      console.log(order)
-      order.forEach(e => {
-        infoToSend.push(`<h6> ${e.cantidad} ${e.name} ${e.color} </h6>`)
-      })
+      let order = await usersRef
+        .child(user.uid)
+        .once("value")
+        .then((snapshot) => {
+          return snapshot.val().finishedBuys;
+        });
+      console.log(order);
+      order.forEach((e) => {
+        infoToSend.push(`<h6> ${e.cantidad} ${e.name} ${e.color} </h6>`);
+      });
       Axios({
         method: "post",
         url: process.env.MAILER_URL,
         data: {
           to: process.env.ADMIN_USER1,
           subject: "Compra del cliente: " + user.displayName,
-          message: infoToSend.toString()
+          message: infoToSend.toString(),
         },
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       })
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };

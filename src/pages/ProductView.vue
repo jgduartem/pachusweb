@@ -33,7 +33,7 @@
               <div class="flex flex-center align-start">Precio:</div>
             </div>
             <div class="q-mr-xs row col-9 text-center">
-              <h6 class="q-ml-md">{{ itemToShow.precio }}$</h6>
+              <h6 class="q-ml-lg">{{ itemToShow.precio }}$</h6>
             </div>
           </div>
           <div class="row col-xs-12-col-12 justify-end">

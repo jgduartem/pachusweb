@@ -23,7 +23,13 @@
               color="primary"
               :disable="selected.length == 0"
               label="Eliminar Articulo"
-              @click="deleteItem(selected[0].id, selected[0].item)"
+              @click="
+                deleteItem(
+                  selected[0].id,
+                  selected[0].item,
+                  selected[0].imgName
+                )
+              "
             />
             <q-btn
               class="q-ml-sm"
@@ -478,6 +484,7 @@ export default {
             cantidad: childSnapshot.child("cantidad").val(),
             color: childSnapshot.child("color").val(),
             descripcion: childSnapshot.child("descripcion").val(),
+            imgName: childSnapshot.child("imgName").val(),
             url: childSnapshot.child("url").val(),
             precio: childSnapshot.child("precio").val(),
             id: childSnapshot.key,
@@ -493,6 +500,7 @@ export default {
             cantidad: childSnapshot.child("cantidad").val(),
             color: childSnapshot.child("color").val(),
             descripcion: childSnapshot.child("descripcion").val(),
+            imgName: childSnapshot.child("imgName").val(),
             url: childSnapshot.child("url").val(),
             precio: childSnapshot.child("precio").val(),
             id: childSnapshot.key,
@@ -508,6 +516,7 @@ export default {
             color: childSnapshot.child("color").val(),
             cantidad: childSnapshot.child("cantidad").val(),
             descripcion: childSnapshot.child("descripcion").val(),
+            imgName: childSnapshot.child("imgName").val(),
             url: childSnapshot.child("url").val(),
             precio: childSnapshot.child("precio").val(),
             id: childSnapshot.key,
@@ -518,33 +527,38 @@ export default {
       this.data = await datos;
       console.log(this.data);
     },
-    deleteItem(id, category) {
+    async deleteItem(id, category, imgName) {
+      const imgRef = imageRef.child("image/" + imgName);
       console.log(category.toLowerCase());
       switch (category.toLowerCase()) {
         case "ropa":
           console.log(id);
-          clothesRef.child(id).remove();
+          await clothesRef.child(id).remove();
+          await imgRef.delete();
           this.selected = [];
-          this.getData();
+          await this.getData();
           break;
 
         case "gorra":
           console.log(id);
-          hatsRef.child(id).remove();
+          await hatsRef.child(id).remove();
+          await imgRef.delete();
           this.selected = [];
-          this.getData();
+          await this.getData();
           break;
 
         case "taza":
           console.log(id);
-          cupsRef.child(id).remove();
+          await cupsRef.child(id).remove();
+          await imgRef.delete();
           this.selected = [];
-          this.getData();
+          await this.getData();
           break;
 
         default:
           console.log(id);
           othersRef.child(id).remove();
+          await imgRef.delete();
           this.selected = [];
           this.getData();
           break;

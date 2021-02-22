@@ -79,6 +79,10 @@ export default {
           await this.$store.dispatch("getUserDataAction", actualUser);
         });
     },
+    async deleteAll() {
+      await this.$store.dispatch("deleteAllAction");
+      this.getUserData();
+    },
   },
 };
 </script>

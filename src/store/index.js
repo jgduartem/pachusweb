@@ -24,6 +24,7 @@ export default function (/* { ssrContext } */) {
       items: [],
       item: null,
       itemPrice: 0,
+      itemToCustomURL: null,
       actualUser: {
         uid: '',
         name: '',
@@ -225,6 +226,9 @@ export default function (/* { ssrContext } */) {
           shoppingCart: [],
           cartPrice: ''
         };
+      },
+      customItem(state, itemURL){
+        state.itemToCustomURL = itemURL;
       }
     },
     actions: {
@@ -246,11 +250,14 @@ export default function (/* { ssrContext } */) {
       cleanUserDataAction(context) {
         context.commit('cleanUserData');
       },
-      deleteAllAction(contex) {
-        contex.commit('deleteAll')
+      deleteAllAction(context) {
+        context.commit('deleteAll')
       },
-      modifyQuantityAction(contex, item) {
-        contex.commit('modifyQuantity', item)
+      modifyQuantityAction(context, item) {
+        context.commit('modifyQuantity', item)
+      },
+      customItemAction(context, item){
+        context.commit('customItem', item)
       }
     },
     getters: {

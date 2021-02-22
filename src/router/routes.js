@@ -12,7 +12,6 @@ const routes = [
       {path: '/Checkout', component: () => import('pages/Checkout.vue')},
       {path: '/MyAccount', component: () => import('pages/MyAccount.vue')},
       {path: '/Customize', component: () => import('pages/Personalization')},
-      {path: '/Canvas', component: () => import('pages/Canvas')}
     ]
   },
 

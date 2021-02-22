@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <div class="row justify-center" ref="printMe">
+  <div class="row justify-center">
+    <div class="row justify-center" ref="printMe" style="width:360px; height: 640px">
       <q-img
-        src="../../public/franelablanca.jpg"
-        width="600px"
-        height="600px"
+        :src="$store.state.itemToCustomURL"
+        width="360px"
+        height="640px"
       />
+
       <VueDragResize
         :isActive="false"
         :w="200"
@@ -16,7 +17,9 @@
         <q-img src="../../public/pachuslogo.png" />
       </VueDragResize>
     </div>
-    <q-btn color="primary" icon="check" label="OK" @click="saveImage()" />
+    <div>
+      <q-btn color="primary" icon="check" label="OK" @click="test()" />
+    </div>
   </div>
 </template>
  
@@ -37,8 +40,13 @@ export default {
       output: null,
     };
   },
-
+  created(){
+    
+  },
   methods: {
+    test(){
+      console.log(this.$store.state.itemToCustomURL)
+    },
     resize(newRect) {
       this.width = newRect.width;
       this.height = newRect.height;
@@ -52,6 +60,8 @@ export default {
       // the canvas.
       const options = {
         type: "dataURL",
+        scale: 0.8,
+        allowTaint: true
       };
       this.output = await this.$html2canvas(el, options);
     },

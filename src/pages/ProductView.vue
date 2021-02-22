@@ -43,6 +43,8 @@
               icon="create"
               label="Personalizar"
               :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
+              @click="customizeItem(itemToShow)"
+              to="/Customize"
             />
             <q-btn
               class="q-ma-sm"
@@ -170,6 +172,9 @@ export default {
       this.$store.dispatch("addItemAction", itemToAdd);
       await this.getUserData()
     },
+    customizeItem(itemToShow){
+      this.$store.dispatch('customItemAction', itemToShow.url)
+    }
   },
 };
 </script>

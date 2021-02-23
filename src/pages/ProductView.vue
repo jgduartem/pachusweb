@@ -42,8 +42,12 @@
               color="primary"
               icon="create"
               label="Personalizar"
-              :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
-              @click="customizeItem(itemToShow)"
+              :disable="
+                enableShop == false ||
+                count == 0 ||
+                (size == null && itemToShow.item == 'Ropa')
+              "
+              @click="setItemToCustom(itemToShow.url)"
               to="/Customize"
             />
             <q-btn
@@ -52,7 +56,11 @@
               icon="shopping_cart"
               label="Agregar al carrito"
               @click="addItem(itemToShow, count)"
-              :disable="enableShop == false || count == 0 || (size == null && itemToShow.item == 'Ropa')"
+              :disable="
+                enableShop == false ||
+                count == 0 ||
+                (size == null && itemToShow.item == 'Ropa')
+              "
             />
           </div>
         </q-card-section>
@@ -116,6 +124,9 @@ export default {
     }
   },
   methods: {
+    setItemToCustom(itemURL) {
+      this.$store.dispatch("setItemToCustomAction", itemURL);
+    },
     async getUserData() {
       let id = this.$store.state.actualUser.uid;
       let actualUser = {};
@@ -146,7 +157,7 @@ export default {
           color: item.color,
           descripcion: item.descripcion,
           cantidad: this.count,
-          talla: [{talla: this.size, cantidad: this.count}],
+          talla: [{ talla: this.size, cantidad: this.count }],
           url: item.url,
           precio: item.precio,
           id: item.id,
@@ -163,18 +174,15 @@ export default {
         };
       }
       this.$q.notify({
-        message: itemToAdd.name + ' agregado al carrito',
+        message: itemToAdd.name + " agregado al carrito",
         timeout: 1000,
-        color: 'info',
-        textColor: 'white',
-        position: 'bottom'
-      })
+        color: "info",
+        textColor: "white",
+        position: "bottom",
+      });
       this.$store.dispatch("addItemAction", itemToAdd);
-      await this.getUserData()
+      await this.getUserData();
     },
-    customizeItem(itemToShow){
-      this.$store.dispatch('customItemAction', itemToShow.url)
-    }
   },
 };
 </script>

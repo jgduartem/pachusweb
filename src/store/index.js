@@ -24,7 +24,8 @@ export default function (/* { ssrContext } */) {
       items: [],
       item: null,
       itemPrice: 0,
-      itemToCustomURL: null,
+      itemToCustomize: null,
+      imageToSet: null,
       actualUser: {
         uid: '',
         name: '',
@@ -227,8 +228,8 @@ export default function (/* { ssrContext } */) {
           cartPrice: ''
         };
       },
-      customItem(state, itemURL){
-        state.itemToCustomURL = itemURL;
+      setItemToCustom(state, itemURL){
+        state.itemToCustomize = itemURL
       }
     },
     actions: {
@@ -256,8 +257,8 @@ export default function (/* { ssrContext } */) {
       modifyQuantityAction(context, item) {
         context.commit('modifyQuantity', item)
       },
-      customItemAction(context, item){
-        context.commit('customItem', item)
+      setItemToCustomAction(context, itemURL){
+        context.commit('setItemToCustom', itemURL)
       }
     },
     getters: {

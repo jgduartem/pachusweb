@@ -1,6 +1,10 @@
 <template>
-  <div class="row justify-center">
-    <div class="row justify-center" ref="printMe" style="width:360px; height: 640px">
+  <div class="row col-12 justify-center">
+    <div
+      class="row col-12 justify-center"
+      ref="printMe"
+      style="width: 360px; height: 640px"
+    >
       <q-img
         :src="$store.state.itemToCustomize"
         width="360px"
@@ -15,27 +19,30 @@
         v-on:resizing="resize"
         v-on:dragging="resize"
       >
-        <q-img 
-        :src="imgUploaded"
-         />
+        <q-img :src="imgUploaded" />
       </VueDragResize>
     </div>
-    <div>
-      <q-btn color="primary" icon="check" label="OK" @click="saveImage()" />
-      <div>
+    <div >
+        <q-btn color="primary" icon="check" label="OK" @click="saveImage()" />
         <q-file filled bottom-slots v-model="imgToUpload" label="Label" counter>
-        <template v-slot:prepend>
-          <q-icon name="cloud_upload" @click.stop />
-        </template>
-        <template v-slot:append>
-          <q-icon name="close" @click.stop="model = null" class="cursor-pointer" />
-        </template>
-        <template v-slot:hint>
-          Field hint
-        </template>
-      </q-file>
-      <q-btn color="primary" icon="check" label="Subir" @click="uploadImage()" />
-      </div>
+          <template v-slot:prepend>
+            <q-icon name="cloud_upload" @click.stop />
+          </template>
+          <template v-slot:append>
+            <q-icon
+              name="close"
+              @click.stop="imgToUpload = null"
+              class="cursor-pointer"
+            />
+          </template>
+          <template v-slot:hint> Field hint </template>
+        </q-file>
+        <q-btn
+          color="primary"
+          icon="check"
+          label="Subir"
+          @click="uploadImage()"
+        />
     </div>
   </div>
 </template>
@@ -56,15 +63,15 @@ export default {
       left: 0,
       output: null,
       imgToUpload: null,
-      imgUploaded: null
+      imgUploaded: null,
     };
   },
-  created(){
-    console.log(this.$store.state.itemToCustomize)
+  created() {
+    console.log(this.$store.state.itemToCustomize);
   },
   methods: {
-    uploadImage(){
-      this.imgUploaded = URL.createObjectURL(this.imgToUpload)
+    uploadImage() {
+      this.imgUploaded = URL.createObjectURL(this.imgToUpload);
     },
     resize(newRect) {
       this.width = newRect.width;

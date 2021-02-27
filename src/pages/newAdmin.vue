@@ -114,7 +114,6 @@
                 class="q-pa-md col-xs-12 col-sm-6 col-md-6 col-lg-6"
                 v-model="size.size"
                 type="text"
-                mask="AAA"
                 label="Talla"
               />
               <q-input
@@ -162,22 +161,38 @@
               label="Precio"
               v-model="newItem.precio"
             />
-            <q-file label="Adjuntar Archivo" v-model="imageFront">
+            <q-file
+              class="q-pa-sm"
+              label="Adjuntar Imagen Frontal"
+              v-model="imageFront"
+            >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <q-file label="Adjuntar Archivo" v-model="imageBack">
+            <q-file
+              class="q-pa-sm"
+              label="Adjuntar Imagen Posterior"
+              v-model="imageBack"
+            >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <q-file label="Adjuntar Archivo" v-model="imageLeft">
+            <q-file
+              class="q-pa-sm"
+              label="Adjuntar Imagen Izquierda"
+              v-model="imageLeft"
+            >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
-            <q-file label="Adjuntar Archivo" v-model="imageRight">
+            <q-file
+              class="q-pa-sm"
+              label="Adjuntar Imagen Derecha"
+              v-model="imageRight"
+            >
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
@@ -187,7 +202,6 @@
                 class="q-ma-sm"
                 label="Guardar Imagen"
                 @click="uploadImage()"
-
               />
               <q-btn
                 class="q-ma-sm"
@@ -229,12 +243,7 @@
             />
             <q-input type="number" label="Precio" v-model="newItem.precio" />
             <div v-if="category == 'Ropa'">
-              <q-input
-                v-model="size.size"
-                type="text"
-                mask="AAA"
-                label="Talla"
-              />
+              <q-input v-model="size.size" type="text" label="Talla" />
               <q-input v-model="size.quantity" type="text" label="Cantidad" />
               <q-btn
                 class="q-ma-sm"
@@ -420,7 +429,7 @@ export default {
               frontName: this.imageFront.name,
               backName: this.imageBack.name,
               leftName: this.imageLeft.name,
-              rightName: this.imageRight.name
+              rightName: this.imageRight.name,
             },
           });
           this.cleanModal();
@@ -551,21 +560,35 @@ export default {
       console.log(this.data);
     },
     async deleteItem(id, category, imgName) {
-      const imgRef = imageRef.child("image/" + imgName);
+      const imgFrontRef = imageRef.child("image/" + imgName.frontName);
+      const imgBackRef = imageRef.child("image/" + imgName.backName);
+      const imgLeftRef = imageRef.child("image/" + imgName.leftName);
+      const imgRightRef = imageRef.child("image/" + imgName.rightName);
       console.log(category.toLowerCase());
       switch (category.toLowerCase()) {
         case "ropa":
           console.log(id);
+          this.$q.loading.show({
+            delay: 100,
+            message: "Eliminado Articulo",
+          });
           await clothesRef.child(id).remove();
-          await imgRef.delete();
+          await imgFrontRef.delete();
+          await imgBackRef.delete();
+          await imgLeftRef.delete();
+          await imgRightRef.delete();
           this.selected = [];
           await this.getData();
+          this.$q.loading.hide();
           break;
 
         case "gorra":
           console.log(id);
           await hatsRef.child(id).remove();
-          await imgRef.delete();
+          await imgFrontRef.delete();
+          await imgBackRef.delete();
+          await imgLeftRef.delete();
+          await imgRightRef.delete();
           this.selected = [];
           await this.getData();
           break;
@@ -573,7 +596,10 @@ export default {
         case "taza":
           console.log(id);
           await cupsRef.child(id).remove();
-          await imgRef.delete();
+          await imgFrontRef.delete();
+          await imgBackRef.delete();
+          await imgLeftRef.delete();
+          await imgRightRef.delete();
           this.selected = [];
           await this.getData();
           break;
@@ -581,7 +607,10 @@ export default {
         default:
           console.log(id);
           othersRef.child(id).remove();
-          await imgRef.delete();
+          await imgFrontRef.delete();
+          await imgBackRef.delete();
+          await imgLeftRef.delete();
+          await imgRightRef.delete();
           this.selected = [];
           this.getData();
           break;
@@ -674,7 +703,7 @@ export default {
       this.newItem.url = item.url;
       this.newItem.precio = item.precio;
     },
-    uploadImage() {
+    async uploadImage() {
       console.log(this.imageFront.name);
       const imgFrontRef = imageRef.child("image/" + this.imageFront.name);
       const imgBackRef = imageRef.child("image/" + this.imageBack.name);
@@ -685,81 +714,77 @@ export default {
         delay: 100,
         message: "Cargando Imagen 1/4",
       });
-      imgFrontRef
+      await imgFrontRef
         .put(this.imageFront, metaData)
         .then(async (data) => {
           console.log(data);
-          await imgFrontRef
-            .getDownloadURL()
-            .then(async (urlFront) => {
-              console.log(urlFront);
-              this.newItem.url.urlFront = urlFront;
-            });
-          this.saveButton+=1;
+          await imgFrontRef.getDownloadURL().then(async (urlFront) => {
+            console.log(urlFront);
+            this.newItem.url.urlFront = await urlFront;
+          });
+          this.saveButton += 1;
           this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);
+          this.$q.loading.hide();
         });
       this.$q.loading.show({
         delay: 100,
         message: "Cargando Imagen 2/4",
       });
-      imgBackRef
+      await imgBackRef
         .put(this.imageBack, metaData)
         .then(async (data) => {
           console.log(data);
-          await imgBackRef
-            .getDownloadURL()
-            .then(async (urlBack) => {
-              console.log(urlBack);
-              this.newItem.url.urlBack = urlBack;
-            });
-          this.saveButton+=1;
+          await imgBackRef.getDownloadURL().then(async (urlBack) => {
+            console.log(urlBack);
+            this.newItem.url.urlBack = await urlBack;
+          });
+          this.saveButton += 1;
           this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);
+          this.$q.loading.hide();
         });
       this.$q.loading.show({
         delay: 100,
         message: "Cargando Imagen 3/4",
       });
-      imgLeftRef
+      await imgLeftRef
         .put(this.imageLeft, metaData)
         .then(async (data) => {
           console.log(data);
-          await imgLeftRef
-            .getDownloadURL()
-            .then(async (urlLeft) => {
-              console.log(urlLeft);
-              this.newItem.url.urlLeft = urlLeft;
-            });
-          this.saveButton+=1;
+          await imgLeftRef.getDownloadURL().then(async (urlLeft) => {
+            console.log(urlLeft);
+            this.newItem.url.urlLeft = await urlLeft;
+          });
+          this.saveButton += 1;
           this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);
+          this.$q.loading.hide();
         });
-        this.$q.loading.show({
+      this.$q.loading.show({
         delay: 100,
         message: "Cargando Imagen 4/4",
       });
-      imgRightRef
-        .put(this.imgRight, metaData)
+      await imgRightRef
+        .put(this.imageRight, metaData)
         .then(async (data) => {
           console.log(data);
-          await imgRightRef
-            .getDownloadURL()
-            .then(async (urlRight) => {
-              console.log(urlRight);
-              this.newItem.url.urlRight = urlRight;
-            });
-          this.saveButton+=1;
+          await imgRightRef.getDownloadURL().then(async (urlRight) => {
+            console.log(urlRight);
+            this.newItem.url.urlRight = await urlRight;
+          });
+          this.saveButton += 1;
           this.$q.loading.hide();
         })
         .catch((err) => {
           console.log(err);
+          this.$q.loading.hide();
         });
     },
   },

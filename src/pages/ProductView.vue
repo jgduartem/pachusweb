@@ -1,7 +1,7 @@
 <template>
   <div class="row col-12 bg-grey-2 justify-center" v-if="show == true">
     <div class="q-ml-xl q-mr-xl row col-xs-12 col-sm-5 col-md-5 col-lg-5">
-      <q-img class="q-pa-xl" :src="itemToShow.url" />
+      <q-img class="q-pa-xl" :src="itemToShow.url.urlFront" />
     </div>
     <div class="q-ml-xl q-mr-xl row col-xs-12 col-sm-5 col-md-5 col-lg-5">
       <q-card class="q-pa-xl my-card" style="width: 100vw">

@@ -30,7 +30,7 @@
 
           <q-card-section class="col-5 flex flex-center">
             <q-avatar size="100px">
-              <q-img :src="i.url" :ratio="16 / 9" />
+              <q-img :src="i.url.urlFront" :ratio="16 / 9" />
             </q-avatar>
           </q-card-section>
         </q-card-section>

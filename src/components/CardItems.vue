@@ -7,7 +7,7 @@
     >
       <div class="q-pa-md">
         <q-card class="row col-12 bg-grey-2">
-          <q-img :src="item.url" height="auto" width="100%" />
+          <q-img :src="item.url.urlFront" height="auto" width="100%" />
 
           <q-card-section class="row col-12">
             <q-btn

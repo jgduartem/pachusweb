@@ -6,7 +6,29 @@
       style="width: 360px; height: 640px"
     >
       <q-img
-        :src="$store.state.itemToCustomize"
+        v-if="position == 'front'"
+        :src="$store.state.itemToCustomize.urlFront"
+        width="360px"
+        height="640px"
+        crossOrigin="Anonymous"
+      />
+      <q-img
+        v-if="position == 'back'"
+        :src="$store.state.itemToCustomize.urlBack"
+        width="360px"
+        height="640px"
+        crossOrigin="Anonymous"
+      />
+      <q-img
+        v-if="position == 'left'"
+        :src="$store.state.itemToCustomize.urlLeft"
+        width="360px"
+        height="640px"
+        crossOrigin="Anonymous"
+      />
+      <q-img
+        v-if="position == 'right'"
+        :src="$store.state.itemToCustomize.urlRight"
         width="360px"
         height="640px"
         crossOrigin="Anonymous"
@@ -22,27 +44,46 @@
         <q-img :src="imgUploaded" />
       </VueDragResize>
     </div>
-    <div >
-        <q-btn color="primary" icon="check" label="OK" @click="saveImage()" />
-        <q-file filled bottom-slots v-model="imgToUpload" label="Label" counter>
-          <template v-slot:prepend>
-            <q-icon name="cloud_upload" @click.stop />
-          </template>
-          <template v-slot:append>
-            <q-icon
-              name="close"
-              @click.stop="imgToUpload = null"
-              class="cursor-pointer"
-            />
-          </template>
-          <template v-slot:hint> Field hint </template>
-        </q-file>
-        <q-btn
-          color="primary"
-          icon="check"
-          label="Subir"
-          @click="uploadImage()"
-        />
+    <div class="row col-12 justify-between">
+      <q-btn flat class="q-pa-sm" label="Frente" @click="position = 'front'" />
+      <q-btn
+        flat
+        class="q-pa-sm"
+        label="Posterior"
+        @click="position = 'back'"
+      />
+      <q-btn
+        flat
+        class="q-pa-sm"
+        label="Izquierda"
+        @click="position = 'left'"
+      />
+      <q-btn flat class="q-pa-sm" label="Derecha" @click="position = 'right'" />
+    </div>
+    <div class="row col-12">
+      <q-file
+        filled
+        bottom-slots
+        v-model="imgToUpload"
+        label="Adjuntar Imagen"
+        counter
+      >
+        <template v-slot:prepend>
+          <q-icon name="cloud_upload" @click.stop />
+        </template>
+        <template v-slot:append>
+          <q-icon
+            name="close"
+            @click.stop="imgToUpload = null"
+            class="cursor-pointer"
+          />
+        </template>
+        <template v-slot:hint> Ajuntar Imagen </template>
+      </q-file>
+      <div class="row col-12 justify-end">
+        <q-btn flat color="primary" label="OK" @click="saveImage()" />
+        <q-btn flat color="primary" label="Subir" @click="uploadImage()" />
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +105,7 @@ export default {
       output: null,
       imgToUpload: null,
       imgUploaded: null,
+      position: null,
     };
   },
   created() {

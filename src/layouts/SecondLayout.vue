@@ -34,7 +34,7 @@
       <q-page-container>
         <q-page>
          <router-view></router-view>
-          <q-page-sticky position="bottom-right" :offset="[18, 18]">
+          <q-page-sticky v-if="$route.path != '/Customize'" position="bottom-right" :offset="[18, 18]">
             <q-btn fab icon="fab fa-whatsapp" color="green" @click="openWhatsapp()" />
           </q-page-sticky>
         </q-page>

@@ -5,51 +5,13 @@
       :key="item.id"
       class="row col-xs-6 col-sm-6 col-md-4 col-lg-4 justify-center"
     >
-      <div class="q-pa-md">
-        <q-card class="row col-12 bg-grey-2">
-          <q-img :src="item.url.urlFront" height="auto" width="100%" />
-
-          <q-card-section class="row col-12">
-            <q-btn
-              fab
-              icon="shopping_cart"
-              @click="item.item == 'Ropa' ? openItem(item) : addItem(item)"
-              :to="item.item == 'Ropa' ? '/View' : null"
-              text-color="white"
-              class="pachuAzul absolute"
-              style="top: 0; right: 12px; transform: translateY(-50%)"
-              :disable="enableShop == false"
-            >
-              <q-tooltip v-if="item.item != 'Ropa'"> Agregar al carrito sin personalizar </q-tooltip>
-            </q-btn>
-            <div class="row no-wrap items-center">
-              <div class="col text-h6 ellipsis">
-                {{ item.name }}
-              </div>
-            </div>
-          </q-card-section>
-
-          <q-card-section class="row col-12 q-pt-none">
-            <div class="q-ml-md text-caption text-grey">
-              {{ item.descripcion }}.
-            </div>
-          </q-card-section>
-
-          <q-separator />
-
-          <q-card-actions class="row col-12 justify-between">
-            <div class="q-ml-md text-subtitle1">$ {{ item.precio }}</div>
-            <q-btn
-              class="q-mr-md"
-              flat
-              color="dark"
-              label="Ver"
-              @click="openItem(item)"
-              to="/View"
-            />
-          </q-card-actions>
-        </q-card>
-      </div>
+    <q-card class="my-card q-ma-md" @click="openItem(item)">
+      <img :src="item.url.urlFront">
+      <q-card-actions align="between">
+        <span class="text-body1">{{item.name}}</span>
+        <span class="text-body1">${{item.precio}}</span>
+      </q-card-actions>
+    </q-card>
     </div>
   </div>
 </template>
@@ -115,7 +77,9 @@ export default {
     },
     openItem(item) {
       this.$store.dispatch("openItemAction", item);
+      this.$emit('closeModal');
       console.log(this.$store.state.item);
+      console.log(this.$store.state.itemToCustomize)
     },
   },
 };

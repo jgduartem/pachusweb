@@ -4,17 +4,26 @@
       <div class="q-mb-md flex flex-center">
         <q-img class="q-my-md" width="20%" height="50%" src="pachuslogo.png" />
       </div>
-      <Navigation />
-      <div class="row col-12 justify-end">
-        <q-select
-          @input="changeData(option)"
-          v-model="option"
-          class="q-pa-md col-xs-12 col-sm-2 col-md-2 col-lg-2"
-          label="Ordenar por"
-          :options="['Ropa', 'Tazas', 'Gorras', 'Otros']"
-        />
+        <Navigation />
+      <div class="row col-12 bg-grey-2" style="height: 60vh">
+        <div class="row col-7 justify-center text-center">
+          <div class="row col-12 justify-center bg-grey-2 items-center">
+            <div>
+              <div class="text-h2 text-weight-medium">DISEÑA</div>
+              <p class="text-h6">Materializa tus ideas en linea</p>
+              <q-btn color="info" label="Crear ahora" to="/Customize" />
+            </div>
+          </div>
+        </div>
+        <div class="row col-5 bg-grey-2">
+          <q-img
+            src="jesusSinBg.png"
+            :ratio="16 / 9"
+            spinner-color="primary"
+            spinner-size="82px"
+          />
+        </div>
       </div>
-      <CardItems :data="data" v-if="active == true" />
     </div>
   </div>
 </template>
@@ -55,7 +64,7 @@ export default {
     auth.onAuthStateChanged(async (user) => {
       if (user) {
         await this.$store.dispatch("getUserIdAction", user.uid);
-        await this.getUserData()
+        await this.getUserData();
         this.session = true;
       } else {
         this.session = false;
@@ -194,5 +203,8 @@ export default {
 }
 .pachuRosa {
   background-color: #f64965;
+}
+.bg-customBlue {
+  background-color: #d3f1f1;
 }
 </style>

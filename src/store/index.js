@@ -196,7 +196,8 @@ export default function (/* { ssrContext } */) {
         }
       },
       openItem(state, item) {
-        state.item = item
+        state.item = item;
+        state.itemToCustomize = item.url
       },
       getUserId(state, id) {
         state.actualUser.uid = id;

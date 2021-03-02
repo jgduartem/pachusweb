@@ -11,7 +11,8 @@ const routes = [
       {path: '/Register', component: () => import('pages/Registration.vue')},
       {path: '/Checkout', component: () => import('pages/Checkout.vue')},
       {path: '/MyAccount', component: () => import('pages/MyAccount.vue')},
-      {path: '/Customize', component: () => import('pages/Personalization.vue')}
+      {path: '/Personalization', component: () => import('pages/Personalization.vue')},
+      {path: '/Customize', component : () => import('pages/Customize.vue')}
     ]
   },
 

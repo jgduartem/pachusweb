@@ -4,26 +4,9 @@
       <div class="q-mb-md flex flex-center">
         <q-img class="q-my-md" width="20%" height="50%" src="pachuslogo.png" />
       </div>
-        <Navigation />
-      <div class="row col-12 bg-grey-2" style="height: 60vh">
-        <div class="row col-7 justify-center text-center">
-          <div class="row col-12 justify-center bg-grey-2 items-center">
-            <div>
-              <div class="text-h2 text-weight-medium">DISEÑA</div>
-              <p class="text-h6">Materializa tus ideas en linea</p>
-              <q-btn color="info" label="Crear ahora" to="/Customize" />
-            </div>
-          </div>
-        </div>
-        <div class="row col-5 bg-grey-2">
-          <q-img
-            src="jesusSinBg.png"
-            :ratio="16 / 9"
-            spinner-color="primary"
-            spinner-size="82px"
-          />
-        </div>
-      </div>
+      <Navigation />
+      <Principal />
+      <Timeline />
     </div>
   </div>
 </template>
@@ -40,8 +23,10 @@ import {
 } from "src/firebase/firebaseConfig";
 import Navigation from "src/components/Navigation.vue";
 import CardItems from "src/components/CardItems";
+import Timeline from "src/components/Timeline";
+import Principal from "src/components/Principal.vue";
 export default {
-  components: { Navigation, CardItems },
+  components: { Navigation, CardItems, Timeline, Principal },
   name: "Index",
   data() {
     return {

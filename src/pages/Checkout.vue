@@ -26,11 +26,14 @@
                 Cantidad: {{ i.cantidad }}
               </div>
             </div>
+            <div class="text-caption text-grey">
+                Precio: ${{ i.precio }}
+              </div>
           </q-card-section>
 
           <q-card-section class="col-5 flex flex-center">
             <q-avatar size="100px">
-              <q-img :src="i.url.urlFront" :ratio="16 / 9" />
+              <q-img :src="i.url.urlFront" />
             </q-avatar>
           </q-card-section>
         </q-card-section>

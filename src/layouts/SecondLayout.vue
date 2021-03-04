@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-layout view="hHh Lpr lff" style="height: 100vh; width: 100vw">
-      <q-header elevated class="pachuRosa">
+      <q-header class="pachuRosa">
         <q-toolbar>
           <q-avatar @click="home()">
             <q-img src="ISO.jpg"/>
@@ -12,12 +12,12 @@
             <q-btn class="q-ma-xs" size="md" outline rounded label="Registrate" to="/Register" v-if="activeUser != true" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Mi Cuenta" v-if="activeUser != false" text-color="grey-3" to="/MyAccount" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
-            <q-btn class="q-ma-xs" size="md" flat @click="drawer = !drawer" round dense icon="shopping_cart" v-if="activeUser != false" />
+            <q-btn class="q-ma-xs" size="md" flat @click="openModal()" round dense icon="shopping_cart" v-if="activeUser != false" />
           </div>
         </q-toolbar>
       </q-header>
 
-      <q-drawer
+     <!-- <q-drawer
         v-if="activeUser != false"
         side="right"
         v-model="drawer"
@@ -29,7 +29,7 @@
             <shopping-list/>
           </q-list>
         </q-scroll-area>
-      </q-drawer>
+      </q-drawer> -->
 
       <q-page-container>
         <q-page>
@@ -37,6 +37,7 @@
           <q-page-sticky v-if="$route.path != '/Customize'" position="bottom-right" :offset="[18, 18]">
             <q-btn fab icon="fab fa-whatsapp" color="green" @click="openWhatsapp()" />
           </q-page-sticky>
+          <ShoppingCart v-if="dialog==true" @closeModal='closeModal()' />
         </q-page>
       </q-page-container>
     </q-layout>
@@ -46,13 +47,14 @@
 <script>
 import {auth} from 'src/firebase/firebaseConfig';
 import ShoppingList from 'src/pages/ShoppingList';
+import ShoppingCart from "src/components/ShoppingCart";
 import router from 'src/router';
 export default {
   name: 'SecondLayout',
-  components:{ShoppingList},
+  components:{ShoppingList, ShoppingCart},
   data(){
       return{
-      drawer: false,
+      dialog: false,
       activeUser: false,
     }
   },
@@ -67,6 +69,12 @@ export default {
     })
   },
   methods: {
+    openModal(){
+      this.dialog = true;
+    },
+    closeModal(){
+      this.dialog = false;
+    },
     openWhatsapp(){
       window.open('https://api.whatsapp.com/send?phone=584248994407&text=Hola!')
     },

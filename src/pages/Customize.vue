@@ -58,24 +58,28 @@
       </div>
       <div class="row col-12 justify-around">
         <q-btn
+          :disable='$store.state.itemToCustomize==null'
           flat
           class="q-pa-sm"
           label="Frente"
           @click="position = 'front'"
         />
         <q-btn
+          :disable='$store.state.itemToCustomize==null'
           flat
           class="q-pa-sm"
           label="Posterior"
           @click="position = 'back'"
         />
         <q-btn
+          :disable='$store.state.itemToCustomize==null'
           flat
           class="q-pa-sm"
           label="Izquierda"
           @click="position = 'left'"
         />
         <q-btn
+          :disable='$store.state.itemToCustomize==null'
           flat
           class="q-pa-sm"
           label="Derecha"
@@ -153,7 +157,7 @@ export default {
       data: [],
       productos: false,
       uploadModal: false,
-      position: "front",
+      position: null,
       imgToUpload: null,
       imgUploaded: null,
     };

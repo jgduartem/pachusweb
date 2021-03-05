@@ -1,7 +1,7 @@
 <template>
   <div>
     <q-layout view="hHh Lpr lff" style="height: 100vh; width: 100vw">
-      <q-header class="pachuRosa">
+      <q-header class="bg-dark">
         <q-toolbar>
           <q-avatar @click="home()">
             <q-img src="ISO.jpg"/>

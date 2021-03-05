@@ -1,10 +1,6 @@
 <template>
   <div>
     <div>
-      <div class="q-mb-md flex flex-center">
-        <q-img class="q-my-md" width="20%" height="50%" src="pachuslogo.png" />
-      </div>
-      <Navigation />
       <Principal />
       <Timeline />
     </div>

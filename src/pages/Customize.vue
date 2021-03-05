@@ -9,14 +9,22 @@
             label="Productos"
             @click="openModal('productos')"
           />
-          <q-tab name="cargar" icon="fas fa-upload" label="Cargar" @click="openModal('upload')" />
+          <q-tab
+            name="cargar"
+            icon="fas fa-upload"
+            label="Cargar"
+            @click="openModal('upload')"
+          />
           <q-tab name="texto" icon="fas fa-font" label="Texto" />
         </q-tabs>
       </div>
 
       <!-- Editor de imagen -->
 
-      <div class="row col-xs-12 col-sm-12 col-md-11 col-lg-11 justify-center" ref="printMe">
+      <div
+        class="row col-xs-12 col-sm-12 col-md-11 col-lg-11 justify-center"
+        ref="printMe"
+      >
         <q-img
           v-if="position == 'front'"
           :src="$store.state.itemToCustomize.urlFront"
@@ -50,36 +58,39 @@
           :isActive="false"
           :w="200"
           :h="200"
+          :x='640'
+          :y='60'
           v-on:resizing="resize"
           v-on:dragging="resize"
         >
           <q-img :src="imgUploaded" />
+          <p>{{ width }} х {{ height }}</p>
         </VueDragResize>
       </div>
       <div class="row col-12 justify-around">
         <q-btn
-          :disable='$store.state.itemToCustomize==null'
+          :disable="$store.state.itemToCustomize == null"
           flat
           class="q-pa-sm"
           label="Frente"
           @click="position = 'front'"
         />
         <q-btn
-          :disable='$store.state.itemToCustomize==null'
+          :disable="$store.state.itemToCustomize == null"
           flat
           class="q-pa-sm"
           label="Posterior"
           @click="position = 'back'"
         />
         <q-btn
-          :disable='$store.state.itemToCustomize==null'
+          :disable="$store.state.itemToCustomize == null"
           flat
           class="q-pa-sm"
           label="Izquierda"
           @click="position = 'left'"
         />
         <q-btn
-          :disable='$store.state.itemToCustomize==null'
+          :disable="$store.state.itemToCustomize == null"
           flat
           class="q-pa-sm"
           label="Derecha"
@@ -94,6 +105,7 @@
       <q-card>
         <q-card-section>
           <div class="text-h4 text-center">Productos</div>
+          <div><q-select v-model="option" :options="options" label="Standard" filled /></div>
           <CardItems :data="data" @closeModal="closeModal()" />
         </q-card-section>
       </q-card>
@@ -160,6 +172,8 @@ export default {
       position: null,
       imgToUpload: null,
       imgUploaded: null,
+      option: '',
+      options: ['Ropa', 'Tazas', 'Gorras', 'Otros']
     };
   },
   async created() {
@@ -176,6 +190,27 @@ export default {
     console.log(this.data);
   },
   methods: {
+    async changeData(option) {
+      this.active = false;
+      switch (option) {
+        case "Ropa":
+          await this.getData("clothes");
+          console.log(this.data)
+          break;
+
+        case "Tazas":
+          await this.getData("cups");
+          console.log(this.data)
+          break;
+
+        case "Gorras":
+          await this.getData("hats");
+          break;
+
+        case "Otros":
+          await this.getData("others");
+      }
+    },
     async print() {
       const el = this.$refs.printMe;
       // add option type to get the image version

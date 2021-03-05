@@ -24,6 +24,7 @@
       <div
         class="row col-xs-12 col-sm-12 col-md-11 col-lg-11 justify-center"
         ref="printMe"
+        v-if="$store.state.itemToCustomize != null"
       >
         <q-img
           v-if="position == 'front'"
@@ -105,8 +106,8 @@
       <q-card>
         <q-card-section>
           <div class="text-h4 text-center">Productos</div>
-          <div><q-select v-model="option" :options="options" label="Standard" filled /></div>
-          <CardItems :data="data" @closeModal="closeModal()" />
+          <div><q-select v-model="option" :options="options" label="Categoria" flat @input="changeData(option)" /></div>
+          <CardItems :data="data" @closeModal="closeModal()" v-if="active == true" />
         </q-card-section>
       </q-card>
     </q-dialog>
@@ -169,11 +170,12 @@ export default {
       data: [],
       productos: false,
       uploadModal: false,
-      position: null,
+      position: 'front',
       imgToUpload: null,
       imgUploaded: null,
       option: '',
-      options: ['Ropa', 'Tazas', 'Gorras', 'Otros']
+      options: ['Ropa', 'Tazas', 'Gorras', 'Otros'],
+      active: false,
     };
   },
   async created() {

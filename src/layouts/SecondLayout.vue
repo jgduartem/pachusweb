@@ -1,35 +1,21 @@
 <template>
   <div>
-    <q-layout view="hHh Lpr lff" style="height: 100vh; width: 100vw">
-      <q-header class="bg-dark">
+    <q-layout view="hHh Lpr lff" style="height: 100vh">
+      <q-header class="row no-wrap bg-dark">
         <q-toolbar>
           <q-avatar @click="home()">
             <q-img src="ISO.jpg"/>
           </q-avatar>
           <q-space/>
-          <div>
+          <q-btn-group>
             <q-btn class="q-ma-xs" size="md" outline rounded label="Ingresar" to="/Login" v-if="activeUser != true" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Registrate" to="/Register" v-if="activeUser != true" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Mi Cuenta" v-if="activeUser != false" text-color="grey-3" to="/MyAccount" />
             <q-btn class="q-ma-xs" size="md" outline rounded label="Salir" @click="logout()" to='/' v-if="activeUser != false" text-color="grey-3" />
             <q-btn class="q-ma-xs" size="md" flat @click="openModal()" round dense icon="shopping_cart" v-if="activeUser != false" />
-          </div>
+          </q-btn-group>
         </q-toolbar>
       </q-header>
-
-     <!-- <q-drawer
-        v-if="activeUser != false"
-        side="right"
-        v-model="drawer"
-        :width="200"
-        :breakpoint="500"
-      >
-        <q-scroll-area class="fit">
-          <q-list padding class="menu-list">
-            <shopping-list/>
-          </q-list>
-        </q-scroll-area>
-      </q-drawer> -->
 
       <q-page-container>
         <q-page>
